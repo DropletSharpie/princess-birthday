@@ -3571,27 +3571,47 @@ else if (event.target.id === "finalButton") {
 
             <div class="final-signature">
 
-                <p>
-                    Aapka
-                </p>
+               <p>
+    Aapka
+</p>
 
-                <h2>
-                    Bhondu 💗
-                </h2>
+<h2>
+    Bhondu 💗
+</h2>
 
-                <p>
-                    More than best friend,
-                    less than boyfriend😭✋🏻
-                </p>
+<p>
+    More than best friend,
+    less than boyfriend😭✋🏻
+</p>
 
-                <p>
-                    Aapka Ayush.
-                    <br>
-                    Aur sirf aapka😭💗
-                </p>
-                I hope jyada nhi rulaya hogaa, mein toh bohot roya hu sab yaad krte huee, haan pagal khushi se hi roya hunn, aapne kabhi dukh se nhi rulaya hainn😭🫶🏻💕
-                Honestly, Thankyou for Everything, Winter fav bana diya haii😭💕 Winter 2025 was the best time ever in my life, aapke saath jitna time spend kiya hai sab best hai, Kuchuupuchuu kahinn kii🫶🏻💕
-                Happyy Birthdayy to meraa bacchaa once againn💌✨🧿
+<p>
+    Aapka Ayush.
+    <br>
+    Aur sirf aapka😭💗
+</p>
+
+<p>
+    I hope jyada nhi rulaya hogaa,
+    mein toh bohot roya hu sab yaad krte huee,
+    haan pagal khushi se hi roya hunn,
+    aapne kabhi dukh se nhi rulaya hainn😭🫶🏻💕
+</p>
+
+<p>
+    Honestly, Thankyou for Everything.
+    <br>
+    Winter fav bana diya haii😭💕
+    <br><br>
+    Winter 2025 was the best time ever in my life,
+    aapke saath jitna time spend kiya hai
+    sab best hai,
+    Kuchuupuchuu kahinn kii🫶🏻💕
+</p>
+
+<p>
+    Happyy Birthdayy to meraa bacchaa
+    once againn💌✨🧿
+</p>
 
             </div>
 
