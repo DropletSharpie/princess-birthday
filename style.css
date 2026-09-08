@@ -645,11 +645,13 @@ button:active {
 
 #musicPlayer {
     position: fixed;
+    right: 20px;
     bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+
     z-index: 1000;
-    width: min(92%, 520px);
+
+    width: min(360px, 90vw);
+
     pointer-events: auto;
 }
 
@@ -753,10 +755,11 @@ button:active {
 
 @media (max-width: 600px) {
 
-    #musicPlayer {
-        bottom: 12px;
-        width: 94%;
-    }
+#musicPlayer {
+    right: 12px;
+    bottom: 12px;
+    width: min(360px, 90vw);
+}
 
     .music-player-inner {
         padding: 10px;

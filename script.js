@@ -68,6 +68,10 @@ const memories = [
             Koi thand mein subah se shaam tak kisi se milne chutti ke din school aake wait nhi karega na
             "Hua na hoga ab koi, yahan hum do sa dobaraa"
             🫶🏻✨💌
+            Lagta hai Arjangarh humare alawa kisi aur ko aise dekh payega? Im tearing up writing this khushi se ye padhte hue🥹💕, Lekin 
+            unfortunately arjangarh kisi ko nhi dekhega aise winter mein milte hue, kabhi bhi nahin🫶🏻💕 Na school ki lane ke saamne ek aaditi jitni sundar ladki kabhi rahegi (kyuki aapse sundar koi hai hi nhi)
+            aur na meri tarah koi dewwana ladka 10-10 kms travel krke us se milne aayega... Literaly ro rha hu oh god, Kya magical memories banai hain, koi nhi bana skta, koi 11th-C mein exam nhi dega, aur na wahan pe ek ladki haath pe patti laga ke aayegii🥹🫶🏻💕💌
+            aapko lagta hai jo memories humari hai waisi koi create kar payega yahan pe? Sach mein ab yahan se jaane ke baad humari tarah yahan koi nahi aa payega kabhi🥹✨💕
         `
     },
 
@@ -131,6 +135,7 @@ const memories = [
             <br><br>
             <b>Jab mein us din aapki aankhon mein dekh rha tha jab aap kahin aur dekh rhe the
             aapne dekha aur bola kya hua? WDYMM KYA HUA, DUNIYA KI SABSE SUNDAR CHEEZ NE MOHIT KARLIYA THAAA😭💕✨</b>
+            Aaj toh bracelet bhi wahin liya tha😭🫶🏻✨
         `
     },
 
@@ -2438,180 +2443,132 @@ else if (event.target.id === "beginMemoriesButton") {
                     😭✋🏻😂
                 </p>
 
-                <button id="herBirthdayButton">
-                    Ab finally... your day 👑🎀
+                <button id="threeBirthdaysButton">
+                Before your birthday wish... 🎂🌷
                 </button>
-
             </section>
 
         `;
 
     }
-
-
     /* =====================================================
-       SEPTEMBER 8 — HER BIRTHDAY
+       THREE BIRTHDAYS 🎂
        ===================================================== */
 
-    else if (event.target.id === "herBirthdayButton") {
+    else if (event.target.id === "threeBirthdaysButton") {
 
         app.innerHTML = `
 
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    September 8, 2026 — 1:15 PM 🎀
+                    Three birthdays. One story. 🎂🌷
                 </p>
 
                 <h1>
-                    Happiest 15th Birthdayyy Princessss 👑💗
+                    Look how much can change... 🥹💗
                 </h1>
 
                 <p>
-                    Kabhi kabhi sochta hoon...
+                    Teen birthdays ke beech
+                    kitni saari cheezein change ho sakti hain...
                     <br><br>
+                    Aur jab maine ye teen photos
+                    ek saath dekhi...
+                    <br><br>
+                    pata nahi kyun,
+                    but it made me smile. 🥹
+                </p>
+
+
+                <div class="birthday-timeline">
+
+                    <div class="birthday-memory">
+
+                        <img
+                            src="birthday-2024.jpeg"
+                            alt="Princess's birthday in 2024"
+                        >
+
+                        <h2>
+                            2024 🌷
+                        </h2>
+
+                        <p>
+                            Aapka 13th birthday. 🎂
+                            <br><br>
+                            Tab mujhe bilkul idea nahi tha
+                            ki do saal baad
+                            main aapke 15th birthday ke liye
+                            ek poori website bana raha hunga😭💗
+                        </p>
+
+                    </div>
+
+
+                    <div class="birthday-memory">
+
+                        <img
+                            src="birthday-2025.jpeg"
+                            alt="Princess's birthday in 2025"
+                        >
+
+                        <h2>
+                            2025 🎈
+                        </h2>
+
+                        <p>
+                            Aapka 14th birthday.
+                            <br><br>
+                            Aur somewhere along the way,
+                            aap meri life ka
+                            important part ban chuki thi. 🥹💗
+                        </p>
+
+                    </div>
+
+
+                    <div class="birthday-memory">
+
+                        <img
+                            src="birthday-2026.jpeg"
+                            alt="Princess's birthday in 2026"
+                        >
+
+                        <h2>
+                            2026 🎀
+                        </h2>
+
+                        <p>
+                            And now...
+                            <br><br>
+                            Aap 15 ki ho gayi🎂
+                            <br><br>
+                            Aur main yahan hoon,
+                            aapke liye
+                            ye poori choti si duniya banaye baitha hoon😭💗
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <p class="quiet">
+                    Three birthdays.
+                    <br>
+                    Three different moments.
+                    <br><br>
+                    And somehow...
+                    <br>
                     <b>
-                        September 8, 2011.
+                        I'm here for this one🥹🎀
                     </b>
                 </p>
 
-                <p>
-                    1:15 PM.
-                    <br><br>
-                    Ek normal si date aur ek normal sa time
-                    lag sakta hai kisi aur ko...
-                </p>
 
-                <p class="quiet">
-                    But mere liye?
-                    <br><br>
-                    Woh din
-                    <br>
-                    bohot, bohot special tha.
-                    🥹🎀💗
-                </p>
-
-                <p>
-                    Kyuki uss din
-                    duniya mein
-                    <br><br>
-                    <b>
-                        AAP AAYI THI.
-                    </b>
-                </p>
-
-                <p>
-                    Us waqt kisi ko kya pata tha
-                    ki woh chhoti si baby
-                    <br><br>
-                    ek din badi hogi,
-                    apne dreams dekhegi,
-                    itni saari logon ki life mein
-                    apni jagah banayegi...
-                </p>
-
-                <p>
-                    Aur mujhe toh bilkul bhi idea nahi tha
-                    ki years later
-                    main yahan baith kar
-                    aapke birthday ke liye
-                    itni saari memories
-                    ek website mein likh raha hunga😭💗
-                </p>
-
-                <p class="quiet">
-                    But I'm really glad
-                    that September 8 happened. 🥹🌷
-                </p>
-
-                <p>
-                    Because if it hadn't...
-                    <br><br>
-                    I wouldn't have met you.
-                    <br>
-                    I wouldn't have known you.
-                    <br>
-                    I wouldn't have heard your laugh.
-                    <br>
-                    I wouldn't have seen
-                    all your little sides.
-                    <br>
-                    I wouldn't have these memories.
-                </p>
-
-                <p>
-                    So today,
-                    I'm not just celebrating
-                    another birthday.
-                </p>
-
-                <p class="quiet">
-                    I'm celebrating
-                    the day someone incredibly special
-                    came into this world. 💗🎀
-                </p>
-
-                <p>
-                    And honestly...
-                    <br><br>
-                    I'm really, really grateful
-                    that somewhere along the way,
-                    our paths crossed too. 🥹🫶🏻
-                </p>
-
-                <p>
-                    15 years ago,
-                    you were just beginning your story.
-                    <br><br>
-                    And now,
-                    you're here...
-                    with dreams,
-                    memories,
-                    people who love you,
-                    and an entire future
-                    waiting for you.
-                </p>
-
-                <p>
-                    Mujhe nhi pata
-                    life ne aapke liye
-                    kya kya likha hai
-                </p>
-
-                <p>
-                    But I genuinely hope
-                    ki jo bhi likha hai
-                    usmein bohot saari khushiyan ho
-                    <br>
-                    bohot saari hasi ho
-                    <br>
-                    bohot saare dreams ho
-                    <br>
-                    aur bohot saare moments ho
-                    jahan aap khud par proud feel karo aur kabhi apne aap ko chota feel na karo, aur agar kabhi aisi naubat aati hai... Mein hu naa🫶🏻💕
-                </p>
-
-                <p>
-                    I hope aap apne dreams chase karo
-                    <br>
-                    I hope aap naye places dekho
-                    <br>
-                    I hope aap bohot kuch seekho
-                    <br>
-                    I hope aap itna haso
-                    ki cheeks dukhne lage😭😂
-                </p>
-
-                <p class="quiet">
-                    And more than anything...
-                    <br><br>
-                    I hope you always remember
-                    how special you are.
-                    🥹💗
-                </p>
-
-                <button id="birthdayNextButton">
-                    Aur ek cheez... 🥹
+                <button id="birthdayWishButton">
+                    Now... your birthday wish. 🎂💗
                 </button>
 
             </section>
@@ -2620,7 +2577,179 @@ else if (event.target.id === "beginMemoriesButton") {
 
     }
 
+    /* =====================================================
+       SEPTEMBER 8 — HER BIRTHDAY
+       ===================================================== */
 
+   else if (event.target.id === "birthdayWishButton") {
+
+    app.innerHTML = `
+
+        <section class="story-page fade-in">
+
+            <p class="small-text">
+                September 8, 2026 — 1:15 PM 🎀
+            </p>
+
+            <h1>
+                Happiest 15th Birthdayyy Princessss 👑💗
+            </h1>
+
+            <p>
+                Kabhi kabhi sochta hoon...
+                <br><br>
+                <b>
+                    September 8, 2011.
+                </b>
+            </p>
+
+            <p>
+                1:15 PM.
+                <br><br>
+                Ek normal si date aur ek normal sa time
+                lag sakta hai kisi aur ko...
+            </p>
+
+            <p class="quiet">
+                But mere liye?
+                <br><br>
+                Woh din
+                <br>
+                bohot, bohot special tha.
+                🥹🎀💗
+            </p>
+
+            <p>
+                Kyuki uss din
+                duniya mein
+                <br><br>
+                <b>
+                    AAP AAYI THI.
+                </b>
+            </p>
+
+            <p>
+                Us waqt kisi ko kya pata tha
+                ki woh chhoti si baby
+                <br><br>
+                ek din badi hogi,
+                apne dreams dekhegi,
+                itni saari logon ki life mein
+                apni jagah banayegi...
+            </p>
+
+            <p>
+                Aur mujhe toh bilkul bhi idea nahi tha
+                ki years later
+                main yahan baith kar
+                aapke birthday ke liye
+                itni saari memories
+                ek website mein likh raha hunga😭💗
+            </p>
+
+            <p class="quiet">
+                But I'm really glad
+                that September 8 happened. 🥹🌷
+            </p>
+
+            <p>
+                Because if it hadn't...
+                <br><br>
+                I wouldn't have met you.
+                <br>
+                I wouldn't have known you.
+                <br>
+                I wouldn't have heard your laugh.
+                <br>
+                I wouldn't have seen
+                all your little sides.
+                <br>
+                I wouldn't have these memories.
+            </p>
+
+            <p>
+                So today,
+                I'm not just celebrating
+                another birthday.
+            </p>
+
+            <p class="quiet">
+                I'm celebrating
+                the day someone incredibly special
+                came into this world. 💗🎀
+            </p>
+
+            <p>
+                And honestly...
+                <br><br>
+                I'm really, really grateful
+                that somewhere along the way,
+                our paths crossed too. 🥹🫶🏻
+            </p>
+
+            <p>
+                15 years ago,
+                you were just beginning your story.
+                <br><br>
+                And now,
+                you're here...
+                with dreams,
+                memories,
+                people who love you,
+                and an entire future
+                waiting for you.
+            </p>
+
+            <p>
+                Mujhe nhi pata
+                life ne aapke liye
+                kya kya likha hai
+            </p>
+
+            <p>
+                But I genuinely hope
+                ki jo bhi likha hai
+                usmein bohot saari khushiyan ho
+                <br>
+                bohot saari hasi ho
+                <br>
+                bohot saare dreams ho
+                <br>
+                aur bohot saare moments ho
+                jahan aap khud par proud feel karo
+                aur kabhi apne aap ko chota feel na karo,
+                aur agar kabhi aisi naubat aati hai...
+                Mein hu naa🫶🏻💕
+            </p>
+
+            <p>
+                I hope aap apne dreams chase karo
+                <br>
+                I hope aap naye places dekho
+                <br>
+                I hope aap bohot kuch seekho
+                <br>
+                I hope aap itna haso
+                ki cheeks dukhne lage😭😂
+            </p>
+
+            <p class="quiet">
+                And more than anything...
+                <br><br>
+                I hope you always remember
+                how special you are.
+                🥹💗
+            </p>
+
+            <button id="birthdayNextButton">
+                Aur ek cheez... 🥹
+            </button>
+
+        </section>
+
+    `;
+
+}
     /* =====================================================
        BIRTHDAY — REASSURANCE
        ===================================================== */
@@ -3460,6 +3589,9 @@ else if (event.target.id === "finalButton") {
                     <br>
                     Aur sirf aapka😭💗
                 </p>
+                I hope jyada nhi rulaya hogaa, mein toh bohot roya hu sab yaad krte huee, haan pagal khushi se hi roya hunn, aapne kabhi dukh se nhi rulaya hainn😭🫶🏻💕
+                Honestly, Thankyou for Everything, Winter fav bana diya haii😭💕 Winter 2025 was the best time ever in my life, aapke saath jitna time spend kiya hai sab best hai, Kuchuupuchuu kahinn kii🫶🏻💕
+                Happyy Birthdayy to meraa bacchaa once againn💌✨🧿
 
             </div>
 
