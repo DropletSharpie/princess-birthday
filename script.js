@@ -3592,7 +3592,7 @@ else if (event.target.id === "finalButton") {
 
 <p>
     I hope jyada nhi rulaya hogaa,
-    mein toh bohot roya hu sab yaad krte huee,
+    mein toh bohot roya hu sab likhte huee,
     haan pagal khushi se hi roya hunn,
     aapne kabhi dukh se nhi rulaya hainn😭🫶🏻💕
 </p>
