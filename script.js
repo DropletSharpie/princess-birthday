@@ -465,6 +465,11 @@ const songs = [
     },
 
     {
+        title: "Yeh Ladka Haye Allah",
+        file: "yeh-ladka-haye-allah.mp3"
+    },
+
+    {
         title: "Dekha Hazaro Dafaa Aapko",
         file: "dekha-hazaro-dafaa-aapko.webm"
     },
