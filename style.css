@@ -1,0 +1,807 @@
+/* =========================================================
+   PRINCESS — MEMORY BOOK
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #3b2630;
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(255, 170, 205, 0.55),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 90% 25%,
+            rgba(255, 215, 230, 0.55),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 90%,
+            rgba(255, 205, 160, 0.45),
+            transparent 32%
+        ),
+        linear-gradient(
+            135deg,
+            #ffe2ee 0%,
+            #fff1f7 45%,
+            #ffe9df 100%
+        );
+
+    background-attachment: fixed;
+}
+
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+#app {
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   BACKGROUND DECORATIONS
+   ========================================================= */
+
+body::before {
+    content: "♡     ✦     ♡     ✧     ♡";
+    position: fixed;
+    top: 7%;
+    left: -20px;
+
+    font-size: 24px;
+    letter-spacing: 12px;
+
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+
+    animation: floatDecoration 7s ease-in-out infinite;
+}
+
+body::after {
+    content: "✧     ♡     ✦     ♡";
+    position: fixed;
+    bottom: 8%;
+    right: -10px;
+
+    font-size: 26px;
+    letter-spacing: 12px;
+
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+
+    animation: floatDecoration 9s ease-in-out infinite reverse;
+}
+
+@keyframes floatDecoration {
+    0%, 100% {
+        transform: translateY(0) rotate(-2deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(2deg);
+    }
+}
+
+
+/* =========================================================
+   OPENING
+   ========================================================= */
+
+.opening {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    padding: 40px 25px;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.opening h1 {
+    animation: titleReveal 1.3s ease both;
+}
+
+.opening .small-text {
+    animation: fadeUp 1s ease both;
+}
+
+.opening p:not(.small-text) {
+    animation: fadeUp 1.2s 0.2s ease both;
+}
+
+.opening button {
+    animation: fadeUp 1.2s 0.4s ease both;
+}
+
+@keyframes titleReveal {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+.small-text {
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+
+    margin-bottom: 20px;
+
+    opacity: 0.65;
+}
+
+h1 {
+    font-size: clamp(42px, 12vw, 78px);
+    line-height: 1.05;
+
+    margin-bottom: 25px;
+
+    color: #4a2935;
+
+    text-shadow:
+        0 3px 20px rgba(150, 70, 100, 0.12);
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.75;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button {
+    border: none;
+
+    padding: 15px 28px;
+
+    border-radius: 999px;
+
+    background: #4a2935;
+    color: white;
+
+    font-family: inherit;
+    font-size: 16px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 25px rgba(60, 30, 40, 0.18);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+button:hover {
+    transform: translateY(-3px) scale(1.03);
+
+    box-shadow:
+        0 12px 30px rgba(60, 30, 40, 0.25);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   STORY PAGES
+   ========================================================= */
+
+.story-page {
+    min-height: 100vh;
+
+    padding: 60px 25px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    position: relative;
+}
+
+.story-page p:not(.small-text):not(.quiet) {
+    max-width: 560px;
+
+    font-size: 19px;
+    line-height: 1.8;
+
+    margin-bottom: 25px;
+}
+
+
+/* Little decorative divider */
+
+.story-page h1::after {
+    content: "♡";
+    display: block;
+
+    font-size: 22px;
+
+    margin-top: 15px;
+
+    opacity: 0.4;
+}
+
+
+/* =========================================================
+   QUIET TEXT
+   ========================================================= */
+
+.quiet {
+    margin-top: 20px;
+
+    opacity: 0.65;
+
+    font-size: 15px;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   MEMORY SECTION
+   ========================================================= */
+
+.memory {
+    min-height: 100vh;
+
+    padding: 45px 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 30px;
+
+    text-align: center;
+
+    position: relative;
+}
+
+
+/* =========================================================
+   PHOTO FRAME
+   ========================================================= */
+
+.memory-image {
+    width: 100%;
+    max-width: 650px;
+
+    padding: 10px;
+
+    background: rgba(255, 255, 255, 0.82);
+
+    border-radius: 6px;
+
+    box-shadow:
+        0 18px 45px rgba(70, 35, 45, 0.18),
+        0 2px 5px rgba(70, 35, 45, 0.08);
+
+    transform: rotate(-1deg);
+
+    transition:
+        transform 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+.memory-image:hover {
+    transform: rotate(0deg) scale(1.015);
+
+    box-shadow:
+        0 25px 55px rgba(70, 35, 45, 0.23);
+}
+
+.memory-image img {
+    width: 100%;
+    display: block;
+
+    border-radius: 2px;
+}
+
+
+/* =========================================================
+   MEMORY TEXT
+   ========================================================= */
+
+.memory-text {
+    width: 100%;
+    max-width: 600px;
+
+    padding: 28px 25px;
+
+    background: rgba(255, 255, 255, 0.55);
+
+    backdrop-filter: blur(8px);
+
+    border: 1px solid rgba(255, 255, 255, 0.7);
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 10px 35px rgba(70, 35, 45, 0.08);
+}
+
+.memory-text p:not(.small-text) {
+    font-size: 18px;
+
+    line-height: 1.8;
+
+    margin-bottom: 25px;
+}
+
+
+/* =========================================================
+   MEMORY BUTTONS
+   ========================================================= */
+
+.memory-buttons {
+    display: flex;
+
+    gap: 12px;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    margin-top: 10px;
+}
+
+.memory-buttons button {
+    min-width: 130px;
+}
+
+
+/* =========================================================
+   ARTIFACTS
+   ========================================================= */
+
+.artifact-list {
+    width: 100%;
+    max-width: 650px;
+
+    display: grid;
+
+    gap: 18px;
+
+    margin: 30px 0;
+}
+
+.artifact-card {
+    position: relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.8),
+            rgba(255,240,247,0.75)
+        );
+
+    padding: 25px;
+
+    border-radius: 22px;
+
+    border: 1px solid rgba(255,255,255,0.8);
+
+    box-shadow:
+        0 10px 30px rgba(70, 35, 45, 0.1);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.artifact-card:hover {
+    transform: translateY(-5px) rotate(-0.5deg);
+
+    box-shadow:
+        0 15px 35px rgba(70, 35, 45, 0.15);
+}
+
+.artifact-card::before {
+    content: "♡";
+
+    position: absolute;
+
+    top: 12px;
+    right: 18px;
+
+    font-size: 20px;
+
+    opacity: 0.3;
+}
+
+.artifact-card h2 {
+    margin-bottom: 10px;
+
+    font-size: 21px;
+}
+
+.artifact-card p {
+    font-size: 16px !important;
+
+    margin: 0 !important;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   FINAL MESSAGE
+   ========================================================= */
+
+.final-love {
+    margin-top: 35px;
+
+    font-size: 32px;
+
+    animation: gentleFloat 3s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+.fade-in {
+    animation: fadeIn 0.9s ease both;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.memory-image {
+    animation: photoAppear 0.9s ease both;
+}
+
+@keyframes photoAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.96) rotate(-2deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(-1deg);
+    }
+}
+
+@keyframes gentleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0.35;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.75;
+        transform: scale(1.08);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    h1 {
+        font-size: clamp(38px, 13vw, 60px);
+    }
+
+    p {
+        font-size: 17px;
+    }
+
+    .story-page p:not(.small-text):not(.quiet) {
+        font-size: 18px;
+    }
+
+    .memory {
+        padding: 30px 15px;
+    }
+
+    .memory-text {
+        padding: 24px 18px;
+    }
+
+    .memory-text p:not(.small-text) {
+        font-size: 17px;
+    }
+
+    .memory-image {
+        padding: 7px;
+    }
+}
+/* 🌷 Princess tulip decorations */
+
+.tulip-decoration {
+    position: fixed;
+    font-size: 48px;
+    opacity: 0.75;
+    pointer-events: none;
+    z-index: 2;
+
+    filter: drop-shadow(0 5px 8px rgba(120, 60, 80, 0.12));
+
+    animation: tulipFloat 4s ease-in-out infinite;
+}
+
+.tulip-top-left {
+    top: 25px;
+    left: 20px;
+    transform: rotate(-12deg);
+}
+
+.tulip-top-right {
+    top: 30px;
+    right: 20px;
+    transform: rotate(12deg);
+    animation-delay: 1s;
+}
+
+.tulip-bottom-left {
+    bottom: 25px;
+    left: 20px;
+    transform: rotate(10deg);
+    animation-delay: 2s;
+}
+
+.tulip-bottom-right {
+    bottom: 25px;
+    right: 20px;
+    transform: rotate(-10deg);
+    animation-delay: 3s;
+}
+
+@keyframes tulipFloat {
+    0%, 100% {
+        translate: 0 0;
+    }
+
+    50% {
+        translate: 0 -8px;
+    }
+}
+/* =========================================================
+   MUSIC PLAYER
+   ========================================================= */
+
+#musicPlayer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: min(92%, 520px);
+    pointer-events: auto;
+}
+
+.music-player-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 22px;
+
+    background: rgba(255, 245, 248, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow:
+        0 10px 30px rgba(120, 60, 80, 0.16),
+        0 2px 8px rgba(120, 60, 80, 0.08);
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+#musicPlayButton {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #fff;
+    color: #8d5368;
+
+    font-size: 17px;
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(120, 60, 80, 0.12);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: transform 0.2s ease;
+}
+
+#musicPlayButton:hover {
+    transform: scale(1.08);
+}
+
+#musicPlayButton:active {
+    transform: scale(0.95);
+}
+
+.music-info {
+    min-width: 0;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.music-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    opacity: 0.55;
+}
+
+#musicTitle {
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#songSelector {
+    max-width: 170px;
+
+    border: none;
+    outline: none;
+
+    padding: 9px 10px;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.8);
+
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#songSelector:focus {
+    outline: none;
+}
+
+
+/* =========================================================
+   MUSIC PLAYER — MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    #musicPlayer {
+        bottom: 12px;
+        width: 94%;
+    }
+
+    .music-player-inner {
+        padding: 10px;
+        gap: 8px;
+        border-radius: 18px;
+    }
+
+    #musicPlayButton {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+    }
+
+    #musicTitle {
+        font-size: 11px;
+    }
+
+    #songSelector {
+        max-width: 125px;
+        font-size: 10px;
+        padding: 8px 6px;
+    }
+}
+/* =========================================================
+   1:15 PM UNLOCK
+   ========================================================= */
+
+#startButton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#unlockTimer {
+    margin-top: 22px;
+    margin-bottom: 14px;
+
+    font-size: 15px;
+    line-height: 1.7;
+
+    opacity: 0.75;
+}
+
+#countdown {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
