@@ -23,6 +23,7 @@ const memories = [
             <br><br>
             Ab mereko lunch mein dusri building jaane ki jarurt nhi hain
             💗
+            Abhi kal jab yahan mile the, jab meine bola tha humare papa admission room mein baat kr rhe hain, tab agar aapko yaad ho, toh aap baal khol rahe the... meine literaly man mein bola tha "Khule rehne diya kariye na, accha lagte hain"😭💕🫶🏻
         `
     },
 
@@ -81,7 +82,7 @@ const memories = [
             Basically school ka ek aur random corner
             somehow memory ban gaya😭💗
             Isi ground mein aapko I-card diya tha NOT KNOWING ki agle saal I would shake hands with my crush
-            aur uske agle saal SHE'LL BE MY EVERYTHING🫶🏻💕 
+            aur uske agle saal SHE'LL BE MY EVERYTHING🫶🏻💕
         `
     },
 
@@ -448,8 +449,6 @@ const memories = [
 ];
 
 let currentMemory = 0;
-
-
 /* =========================================================
    MUSIC PLAYER
    ========================================================= */
@@ -459,26 +458,32 @@ const songs = [
         title: "Humko Humise Chura Lo",
         file: "humko-humise-chura-lo.webm"
     },
+
     {
         title: "Dekha Hazaro Dafaa Aapko",
         file: "dekha-hazaro-dafaa-aapko.webm"
     },
+
     {
         title: "Dil Ka Jo Haal Hai",
         file: "dil-ka-jo-haal-hai.webm"
     },
+
     {
         title: "Hua Hai Aaj Pehli Baar",
         file: "hua-hai-aaj-pehli-baar.webm"
     },
+
     {
         title: "Chaand Sifarish",
         file: "chaand-sifarish.mp3"
     },
+
     {
         title: "Tere Liye",
         file: "tere-liye.mp3"
     },
+
     {
         title: "Aankhein Khuli Ho Ya Ho Band",
         file: "aankhein-khuli-ho-ya-ho-band.webm"
@@ -495,7 +500,9 @@ let audio = null;
 
 function createMusicPlayer() {
 
-    if (document.getElementById("musicPlayer")) return;
+    if (document.getElementById("musicPlayer")) {
+        return;
+    }
 
     const player = document.createElement("div");
 
@@ -504,7 +511,11 @@ function createMusicPlayer() {
     player.innerHTML = `
         <div class="music-player-inner">
 
-            <button id="musicPlayButton">
+            <button
+                id="musicPlayButton"
+                type="button"
+                aria-label="Play or pause music"
+            >
                 ▶
             </button>
 
@@ -520,7 +531,10 @@ function createMusicPlayer() {
 
             </div>
 
-            <select id="songSelector">
+            <select
+                id="songSelector"
+                aria-label="Select song"
+            >
 
                 ${songs.map((song, index) => `
                     <option value="${index}">
@@ -532,26 +546,70 @@ function createMusicPlayer() {
 
         </div>
 
-        <audio id="backgroundAudio"></audio>
+        <audio
+            id="backgroundAudio"
+            preload="metadata"
+        ></audio>
     `;
 
     document.body.appendChild(player);
 
     audio = document.getElementById("backgroundAudio");
 
+    if (!audio) {
+        return;
+    }
+
     audio.src = songs[0].file;
 
-    document.getElementById("musicPlayButton")
-        .addEventListener("click", toggleMusic);
+    const playButton =
+        document.getElementById("musicPlayButton");
 
-    document.getElementById("songSelector")
-        .addEventListener("change", (event) => {
+    const songSelector =
+        document.getElementById("songSelector");
 
-            currentSong = Number(event.target.value);
+    if (playButton) {
+        playButton.addEventListener(
+            "click",
+            toggleMusic
+        );
+    }
+
+    if (songSelector) {
+        songSelector.addEventListener(
+            "change",
+            function (event) {
+
+                const selectedIndex =
+                    Number(event.target.value);
+
+                if (
+                    Number.isInteger(selectedIndex) &&
+                    selectedIndex >= 0 &&
+                    selectedIndex < songs.length
+                ) {
+                    currentSong = selectedIndex;
+                    changeSong(currentSong);
+                }
+
+            }
+        );
+    }
+
+    audio.addEventListener(
+        "ended",
+        function () {
+
+            currentSong++;
+
+            if (currentSong >= songs.length) {
+                currentSong = 0;
+            }
 
             changeSong(currentSong);
 
-        });
+        }
+    );
 }
 
 
@@ -561,19 +619,45 @@ function createMusicPlayer() {
 
 function toggleMusic() {
 
-    if (!audio) return;
+    if (!audio) {
+        return;
+    }
 
-    const button = document.getElementById("musicPlayButton");
+    const button =
+        document.getElementById("musicPlayButton");
+
+    if (!button) {
+        return;
+    }
 
     if (audio.paused) {
 
-        audio.play()
-            .then(() => {
-                button.textContent = "❚❚";
-            })
-            .catch(() => {
-                button.textContent = "▶";
-            });
+        const playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+
+            playPromise
+                .then(function () {
+
+                    button.textContent = "❚❚";
+
+                })
+                .catch(function (error) {
+
+                    console.log(
+                        "Audio could not be played:",
+                        error
+                    );
+
+                    button.textContent = "▶";
+
+                });
+
+        } else {
+
+            button.textContent = "❚❚";
+
+        }
 
     } else {
 
@@ -591,34 +675,97 @@ function toggleMusic() {
 
 function changeSong(index) {
 
-    if (!audio) return;
+    if (!audio) {
+        return;
+    }
+
+    if (
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= songs.length
+    ) {
+        return;
+    }
+
+    const button =
+        document.getElementById("musicPlayButton");
+
+    const title =
+        document.getElementById("musicTitle");
+
+    const selector =
+        document.getElementById("songSelector");
+
+    audio.pause();
 
     audio.src = songs[index].file;
 
-    document.getElementById("musicTitle").textContent =
-        songs[index].title;
+    audio.load();
 
-    document.getElementById("songSelector").value = index;
+    if (title) {
+        title.textContent = songs[index].title;
+    }
 
-    audio.play()
-        .then(() => {
-            document.getElementById("musicPlayButton").textContent = "❚❚";
-        })
-        .catch(() => {
-            document.getElementById("musicPlayButton").textContent = "▶";
-        });
+    if (selector) {
+        selector.value = String(index);
+    }
+
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+
+        playPromise
+            .then(function () {
+
+                if (button) {
+                    button.textContent = "❚❚";
+                }
+
+            })
+            .catch(function (error) {
+
+                console.log(
+                    "Audio could not be played:",
+                    error
+                );
+
+                if (button) {
+                    button.textContent = "▶";
+                }
+
+            });
+
+    } else if (button) {
+
+        button.textContent = "❚❚";
+
+    }
 }
 
 
 /* =========================================================
-   MEMORY SYSTEM
+   START MUSIC PLAYER
+   ========================================================= */
+
+createMusicPlayer();
+/* =========================================================
+   SHOW MEMORY
    ========================================================= */
 
 function showMemory(index) {
 
+    if (
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= memories.length
+    ) {
+        return;
+    }
+
     const memory = memories[index];
 
     app.innerHTML = `
+
         <section class="memory fade-in">
 
             <div class="memory-image">
@@ -633,7 +780,7 @@ function showMemory(index) {
             <div class="memory-text">
 
                 <p class="small-text">
-                    Memory ${index + 1} / ${memories.length}
+                    Memory ${index + 1} of ${memories.length}
                 </p>
 
                 <h1>
@@ -648,17 +795,19 @@ function showMemory(index) {
 
                     ${
                         index > 0
-                        ? `<button id="prevMemoryButton">
-                                ← Back
-                           </button>`
-                        : ""
+                            ? `
+                                <button id="prevMemoryButton">
+                                    ← Previous
+                                </button>
+                              `
+                            : ""
                     }
 
                     <button id="nextMemoryButton">
                         ${
-                            index === memories.length - 1
-                            ? "There's more... →"
-                            : "Keep walking →"
+                            index < memories.length - 1
+                                ? "Next memory →"
+                                : "That's all 30... 🥹"
                         }
                     </button>
 
@@ -667,186 +816,226 @@ function showMemory(index) {
             </div>
 
         </section>
+
     `;
 }
-
-
-createMusicPlayer();
-
 
 /* =========================================================
    STORY NAVIGATION
    ========================================================= */
 
-document.addEventListener("click", (event) => {
-
-
-    /* =====================================================
-       OPENING
-       ===================================================== */
-
-    if (event.target.id === "startButton") {
-
-        app.innerHTML = `
-
-            <section class="story-page fade-in">
-
-                <p class="small-text">
-                    Before the story
-                </p>
-
-                <h1>
-                    Before we became <i>us</i>... 🎀
-                </h1>
-
-                <p>
-                    Our fathers were already best friends,
-                    so you weren't exactly a stranger to me.
-                </p>
-
-                <p>
-                    You were simply
-                    my father's best friend's daughter.
-                    <br><br>
-                    Someone I knew.
-                    Someone I would see sometimes.
-                </p>
-
-                <p>
-                    But knowing someone exists
-                    and actually getting to know them
-                    are two very different things.
-                </p>
-
-                <p class="quiet">
-                    I had no idea
-                    how beautiful that second part
-                    was going to be. 🦋
-                </p>
-
-                <button id="firstMeetingButton">
-                    Go back a little further → 💗
-                </button>
-
-            </section>
-
-        `;
-    }
-
+document.addEventListener("click", function (event) {
 
     /* =====================================================
-       FIRST IMPRESSION
+       START STORY
        ===================================================== */
 
-    else if (event.target.id === "firstMeetingButton") {
+  if (event.target.id === "startButton") {
 
-        app.innerHTML = `
+    app.innerHTML = `
 
-            <section class="story-page fade-in">
+        <section class="story-page fade-in">
 
-                <p class="small-text">
-                    Before the friendship
-                </p>
+            <p class="small-text">
+                The very beginning 🌷
+            </p>
 
-                <h1>
-                    Then I started noticing you. 🦋
-                </h1>
+            <h1>
+                And then...
+                I saw you. 😵‍💫💘
+            </h1>
 
-                <p>
-                    I still remember the feeling
-                    of seeing you back then.
-                </p>
+            <p>
+                I still remember the first time
+                I saw you.
+                <br><br>
+                And for some reason...
+                <br>
+                <i>my heart just skipped a beat. 😭💘</i>
+            </p>
 
-                <p>
-                    You weren't just
-                    "someone I knew" anymore.
-                </p>
+            <p>
+                Mere dimaag mein literally
+                ek hi thought aaya:
+                <br><br>
+                <i>
+                    "Mein swarg mein hu kya? 😵‍💫
+                    Itni sundar ladki???"
+                </i>
+            </p>
 
-                <p>
-                    There was something about you
-                    that made my attention
-                    find you without even trying.
-                </p>
+            <p>
+                Aur phir pata nahi kaise,
+                but I got butterflies.
+                <br><br>
+                <b>
+                    Actual butterflies. 🦋💘
+                </b>
+            </p>
 
-                <p>
-                    And eventually,
-                    I had to accept
-                    that I had a crush on you. 😭
-                </p>
+            <p>
+                Uske baad se
+                aapko dekhna somehow
+                mere din ka favourite little moment
+                ban gaya tha. 🌷
+            </p>
 
-                <p class="quiet">
-                    Looking back,
-                    I think my taste was
-                    pretty good. 🫣💗
-                </p>
+            <p>
+                Kabhi school ke corridors mein
+                aap ghoomte hue dikh jaati...
+                <br><br>
+                Kabhi ground mein bench par...
+                <br><br>
+                Kabhi rocks par baithi hoti...
+                <br><br>
+                Aur main bas dur se
+                aapko dekh kar khush ho jaata. 🥹💗
+            </p>
 
-                <button id="schoolButton">
-                    Now let's go to school → 🏫
-                </button>
+            <p>
+                Mujhe aapke baare mein
+                kuch bhi properly nahi pata tha.
+                <br><br>
+                Bas itna pata tha ki
+                <i>
+                    pata nahi kyun,
+                    meri nazar aapko hi dhoondti thi😭💘
+                </i>
+            </p>
 
-            </section>
+            <p>
+                Aur obviously,
+                mera overthinking brain
+                apna kaam kar raha tha😭✋🏻
+                <br><br>
+                Maine toh soch liya tha:
+                <br><br>
+                <i>
+                    "Chhodo yaar...
+                    ye toh mereko bhav bhi nahi degi." 😭
+                </i>
+            </p>
 
-        `;
-    }
+            <p class="quiet">
+                Little did I know...
+                <br><br>
+                ki kuch hafton baad
+                mujhe pata chalega
+                ki aap koi random girl nahi thi.
+                <br><br>
+                <b>
+                    Aapke papa...
+                    mere papa ke best friend the. 😭💗
+                </b>
+            </p>
 
+            <button id="firstMeetingButton">
+                Aur phir mujhe aapke baare mein pata chala... → 🌷
+            </button>
 
-    /* =====================================================
-       SCHOOL INTRO
-       ===================================================== */
+        </section>
 
-    else if (event.target.id === "schoolButton") {
+    `;
+}
+/* =====================================================
+   FIRST IMPRESSION
+   ===================================================== */
 
-        app.innerHTML = `
+else if (event.target.id === "firstMeetingButton") {
 
-            <section class="story-page fade-in">
+    app.innerHTML = `
 
-                <p class="small-text">
-                    Chapter One
-                </p>
+        <section class="story-page fade-in">
 
-                <h1>
-                    The place that saw it all. 🏫
-                </h1>
+            <p class="small-text">
+                And then... 🌷
+            </p>
 
-                <p>
-                    School was supposed to be
-                    classes, teachers, exams,
-                    lunch and going home.
-                </p>
+            <h1>
+                Little did I know... 👀
+            </h1>
 
-                <p>
-                    Somehow,
-                    it became the setting
-                    for one of my favourite
-                    chapters of my life.
-                </p>
+            <p>
+                Us waqt mujhe bilkul nahi pata tha
+                ki meri life mein kya hone wala hai.
 
-                <p class="quiet">
-                    So...
-                    let's walk through it. 🫶🏻
-                </p>
+            <p class="quiet">
+                Lekin...
+                <br><br>
+                <b>
+                    3 saal baad,
+                    meri life mein ek twist aane wala tha...
+                </b>
+            </p>
 
-                <button id="beginMemoriesButton">
-                    Enter the memories → ✨
-                </button>
+            <p>
+                Aur woh bhi
+                <i>bohot bada twist. 😭💗</i>
+            </p>
 
-            </section>
+            <p class="quiet">
+                Lekin...
+                <br><br>
+                pehle start karte hain
+                <b>school se. 🏫🌷</b>
+            </p>
 
-        `;
-    }
+            <button id="schoolButton">
+                Chalo school chalte hain → 🏫💗
+            </button>
 
+        </section>
 
-    /* =====================================================
-       BEGIN MEMORIES
-       ===================================================== */
+    `;
 
-    else if (event.target.id === "beginMemoriesButton") {
+}
+else if (event.target.id === "schoolButton") {
 
-        currentMemory = 0;
+    app.innerHTML = `
 
-        showMemory(currentMemory);
+        <section class="story-page fade-in">
 
-    }
+            <p class="small-text">
+                Chapter One
+            </p>
+
+            <h1>
+                The place that saw it all. 🏫
+            </h1>
+
+            <p>
+                School was supposed to be
+                classes, teachers, exams,
+                lunch and going home.
+            </p>
+
+            <p>
+                Somehow,
+                it became the setting
+                for one of my favourite
+                chapters of my life JUST BECAUSE OF AAP😭🫶🏻
+            </p>
+
+            <p class="quiet">
+                So...
+                let's walk through it. 🫶🏻
+            </p>
+
+            <button id="beginMemoriesButton">
+                Enter the memories → ✨
+            </button>
+
+        </section>
+
+    `;
+}
+
+else if (event.target.id === "beginMemoriesButton") {
+
+    currentMemory = 0;
+    showMemory(currentMemory);
+
+}
 
 
     /* =====================================================
@@ -868,58 +1057,84 @@ document.addEventListener("click", (event) => {
                 <section class="story-page fade-in">
 
                     <p class="small-text">
-                        30 memories later...
+                        30 memories later... 🥹
                     </p>
 
                     <h1>
-                        And that's only a tiny part of it. 💗
+                        And somehow...
+                        we're still here. 💗
                     </h1>
 
                     <p>
-                        Thirty photos.
+                        Itna kuch yaad krne ke baad
+                        mereko ek cheez realise hui😭
                     </p>
 
                     <p>
-                        But there are so many memories
-                        that never had a camera pointed at them.
+                        Humari story mein
+                        kitni saari cheezein hui hain
+                        aur phir bhi
+                        meri favourite cheezein
+                        mostly woh hain
+                        jo uss time bilkul normal lagti thi😭💗
                     </p>
 
                     <p>
-                        Conversations.
+                        Ek random smile...
                         <br>
-                        Laughs.
+                        Ek random conversation...
                         <br>
-                        Random walks.
+                        Ek dusre ko assembly mein
+                        dhundhna...
                         <br>
-                        Little smiles.
+                        Lunch ke time bahar jaana...
                         <br>
-                        Days that felt completely ordinary
-                        at the time.
+                        Kisi corner mein baith ke baatein krna...
+                        <br>
+                        Aapko dur se dekh lena...
                     </p>
 
                     <p class="quiet">
-                        And somehow,
-                        those ordinary days
-                        became some of my favourites.
+                        Bas...
+                        <br><br>
+                        chhoti chhoti cheezein. 🥹💗
                     </p>
 
                     <p>
-                        Because eventually,
-                        I wasn't just collecting memories.
+                        Aur pata hai
+                        sabse ajeeb cheez kya hai?
+                    </p>
+
+                    </p>
+
+                    <p>
+                        We were just living it.
+                    </p>
+
+                    <p>
+                        Aur shayad isi liye
+                        mujhe humari story itni pasand hai...
+                        kyuki humne isko force nhi kiya
+                        bas somehow
+                        ye hoti chali gayi💗
                     </p>
 
                     <p class="quiet">
-                        I was collecting moments with you. 🦋
+                        Aur ab dekho...
+                        <br>
+                        30 photos bhi kam pad gaye😭✋🏻
                     </p>
 
                     <button id="friendshipButton">
-                        Now let's go back to the beginning → 💌
+                        Ab chalo thoda aur peeche chalte hain... 💌
                     </button>
 
                 </section>
 
             `;
+
         }
+
     }
 
 
@@ -936,11 +1151,12 @@ document.addEventListener("click", (event) => {
             showMemory(currentMemory);
 
         }
+
     }
 
 
     /* =====================================================
-       AUGUST 21 — FRIENDSHIP
+       FRIENDSHIP — AUGUST 21
        ===================================================== */
 
     else if (event.target.id === "friendshipButton") {
@@ -954,59 +1170,115 @@ document.addEventListener("click", (event) => {
                 </p>
 
                 <h1>
-                    One little question. 💌
+                    Aur phir ek din...
+                    sab change ho gaya. 💌
                 </h1>
 
                 <p>
-                    I spent around thirty minutes
-                    writing an apology.
-                </p>
-
-                <p>
-                    Thirty minutes
-                    for one message. 😭
-                </p>
-
-                <p>
-                    Then I sent it.
+                    Meine pehle fake id banayi thi
+                    but usse message nhi jaa rha tha😭
                     <br><br>
-                    And waited.
-                    <br>
-                    And checked my phone.
-                    <br>
-                    And waited again.
+                    Toh pata nhi kahan se
+                    himmat aayi
+                    aur apni id se message krdiya
                 </p>
 
                 <p>
-                    When you replied,
-                    I finally asked:
+                    Apology type karne mein
+                    <br>
+                    THIRTY MINUTES😭😭😭
                 </p>
 
-                <p class="quiet">
+                <p>
+                    30 minute sirf ye sochne mein
+                    ki kaise likhu
+                    kya likhu
+                    zyada weird na lage
+                    aur send karne ke baad
+                    kya hoga😭✋🏻
+                </p>
+
+                <p>
+                    Phir finally send dabaya...
+                    <br><br>
+                    DHAK🫀DHAK🫀DHAK🫀DHAK🫀
+                </p>
+
+                <p>
+                    2 baje message bheja
+                    aur uske baad
+                    har 15 minute mein phone check😂
+                </p>
+
+                <p>
+                    Reply aaya?
+                    <br>
+                    Nahi.
+                    <br><br>
+                    15 minute later...
+                    <br>
+                    Reply aaya?
+                    <br>
+                    Nahi😭
+                </p>
+
+                <p>
+                    Aur phir agle din
+                    aapka reply aaya
+                </p>
+
+                <p>
                     <i>
-                        "I know it's too quick,
+                        "Yeah I do remember you and no worries,
+                        atleast you apologized unlike other boys in your class"
+                    </i>
+                </p>
+
+                <p>
+                    Mera dimaag:
+                    <br>
+                    SHAADI PAKKIII🥳🥳🥳
+                </p>
+
+                <p>
+                    Phir maine bina time waste kiye
+                    pooch liya
+                    <br><br>
+                    <i>
+                        "I know its too quick,
                         but can we be friends?"
                     </i>
                 </p>
 
                 <p>
-                    And you said yes.
+                    Aur phir wapas
+                    har 15 minute mein phone check😭😂
+                </p>
+
+                <p>
+                    Aur jab aapne bola
+                    <br><br>
+                    <i>
+                        "Yes I think we can be friends"
+                    </i>
                 </p>
 
                 <p class="quiet">
-                    One tiny "yes".
+                    Bas.
                     <br><br>
-                    So many memories after it.
-                    🥹🫶🏻
+                    Mereko kya pata tha
+                    ki woh ek chhota sa YES
+                    meri life ki itni badi memory ban jayega. 🥹💗
                 </p>
 
                 <button id="friendshipAfterButton">
-                    And then we slowly became us → 🦋
+                    Aur phir dheere dheere... 🦋
                 </button>
 
             </section>
 
         `;
+
     }
 
 
@@ -1025,57 +1297,107 @@ document.addEventListener("click", (event) => {
                 </p>
 
                 <h1>
-                    I got to know the person behind the crush. 💗
+                    Crush se zyada...
+                    person pasand aa gayi. 💗
                 </h1>
 
                 <p>
-                    And honestly,
+                    Shuru mein toh
+                    obviously mein aapki looks pe hi fida tha😭✋🏻
+                    <br><br>
+                    Dur se dekhta tha
+                    aur sochta tha
+                    "bhai ye mereko bhav thodi degi"😭
+                </p>
+
+                <p>
+                    Lekin phir baat karte karte
+                    mujhe aapke baare mein
+                    aur cheezein pata chalne lagi
+                </p>
+
+                <p>
+                    Aapka gussa...
+                    <br>
+                    Aapki hasi...
+                    <br>
+                    Aapka random bachha ban jaana...
+                    <br>
+                    Aapki little little habits...
+                    <br>
+                    Aapko kya pasand hai...
+                    <br>
+                    Aapko kya hurt karta hai...
+                    <br>
+                    Aap kis cheez pe excited hoti ho...
+                    <br>
+                    Aapke dreams kya hain...
+                </p>
+
+                <p>
+                    Aur somewhere along the way
+                    mujhe realise hua
+                    ki mereko sirf woh ladki pasand nhi
+                    jo mein dur se dekhta tha😭💗
+                </p>
+
+                <p class="quiet">
+                    Mereko woh person pasand aa gayi
+                    jo uss ladki ke andar thi. 🥹💗
+                </p>
+
+                <p>
+                    And honestly...
+                    <br><br>
                     that became my favourite part.
                 </p>
 
                 <p>
-                    I got to know your little habits.
+                    Kyuki crush hona easy tha😭
                     <br>
-                    Your sense of humour.
+                    Aapko beautiful dekhna easy tha
                     <br>
-                    The things you care about.
-                    <br>
-                    The things that make you happy.
-                    <br>
-                    The things you dream about.
+                    Aapko dur se admire karna easy tha
                 </p>
 
                 <p>
-                    I got to know
-                    the person behind
-                    the first impression.
+                    But aapko actually jaan na...
+                    <br><br>
+                    Aapke moods samajhna
+                    <br>
+                    Aapka gussa samajhna
+                    <br>
+                    Aapki softness dekhna
+                    <br>
+                    Aapki sensitivity samajhna
+                    <br>
+                    Aapko comfortable hote dekhna
+                    <br>
+                    Aapko apne saamne
+                    bilkul bachha ban jaate dekhna...
                 </p>
 
                 <p class="quiet">
-                    And somehow...
-                    <br><br>
-                    my crush turned out
-                    to be an even better person
-                    than I had imagined. 🫣💗
+                    Woh mujhe aur zyada pasand aaya. 💗
                 </p>
 
-                <p>
-                    Honestly,
-                    quite unfair of you. 😭
+                    <br><br>
+                    mein aur zyada attached ho gaya😭✋🏻
                 </p>
 
                 <button id="littleThingsButton">
-                    Keep going → 🎀
+                    Phir toh aap meri everyday ban gayi... 🎀
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       LITTLE THINGS
+       LITTLE THINGS / COMFORT PERSON
        ===================================================== */
 
     else if (event.target.id === "littleThingsButton") {
@@ -1085,71 +1407,119 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    The in-between
+                    The little things 💗
                 </p>
 
                 <h1>
-                    You slowly became part of my everyday. 🌷
+                    Pata hi nhi chala kab... 🥹
                 </h1>
 
                 <p>
-                    There wasn't one huge moment.
+                    Ek conversation regular conversation ban gayi
+                    <br>
+                    Ek random joke inside joke ban gaya
+                    <br>
+                    Ek random person
+                    meri favourite person ban gayi😭
                 </p>
 
                 <p>
-                    It happened quietly.
-                </p>
-
-                <p>
-                    A conversation became
-                    a regular conversation.
+                    Kuch funny hota hai
+                    toh aapko batana hota hai
                     <br><br>
-                    A joke became an inside joke.
+                    Kuch exciting hota hai
+                    toh aapko batana hota hai
                     <br><br>
-                    A random day became
-                    something worth remembering.
+                    Kuch bura hota hai
+                    toh aapko batana hota hai
+                    <br><br>
+                    Aur aap low hoti hai
+                    toh mera dimaag automatically
+                    ye sochne lagta
+                    ki "isko kaise hasau"😭💗
                 </p>
 
                 <p>
-                    And then,
-                    whenever something happened,
-                    I started thinking:
+                    Aur kabhi kuch bhi nhi hota...
+                    <br><br>
+                    tab bhi aapko pareshan karna hota
+                    because obviously
+                    aapko chain se kaise rehne du😭✋🏻😂
+                </p>
+
+                <p>
+                    Dheere dheere
+                    aap woh person ban gayi
+                    jisko kuch bhi bolne mein
+                    mujhe hesitation nhi hoti hai
+                </p>
+
+                <p>
+                    Aapke saamne
+                    mein stupid ho sakta hun
+                    <br>
+                    mein emotional ho sakta hun
+                    <br>
+                    mein bilkul pagal ho sakta hun
+                    <br>
+                    aur aap bhi mere saamne
+                    apni woh side dikha sakti hain
+                    jo har kisi ko nhi dikhti💗
                 </p>
 
                 <p class="quiet">
-                    "I need to tell her this." 😭
+                    And I think that's when
+                    you became my comfort person. 🫶🏻
                 </p>
 
                 <p>
-                    Something funny?
-                    Tell you.
-                    <br><br>
-                    Something exciting?
-                    Tell you.
-                    <br><br>
-                    Something bothering me?
-                    Somehow,
-                    tell you that too.
+                    Aur mujhe ye cheez
+                    bohot zyada precious lagti hai
+                </p>
+
+                <p>
+                    Kyuki comfort ka matlab mere liye
+                    ye nhi ki har waqt happy rehna
+                </p>
+
+                <p>
+                    Comfort ka matlab hai
+                    ki aap gussa ho sakti ho
+                    <br>
+                    aap low ho sakti ho
+                    <br>
+                    aap chup ho sakti ho
+                    <br>
+                    aap ro sakti ho
+                    <br>
+                    aap bachha ban sakti ho
+                    <br>
+                    aap bas "mujhe nhi pata" bol sakti ho
+                </p>
+
+                <p>
+                    Aur phir bhi
+                    aapko kisi particular version
+                    mein act karne ki zarurat nhi hai
                 </p>
 
                 <p class="quiet">
-                    That's when I realised
-                    you had become
-                    one of my safest places. 🫶🏻💗
+                    Bas aap raho. 🫶🏻💗
                 </p>
 
                 <button id="preBirthdayButton">
-                    There's one day I want to remember... 🦋
+                    Ek din toh aisa bhi tha... 👀
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       PRE-BIRTHDAY — ONLY 3 STUDENTS
+       PRE-BIRTHDAY — 3 STUDENTS
        ===================================================== */
 
     else if (event.target.id === "preBirthdayButton") {
@@ -1159,61 +1529,80 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    One ordinary school day
+                    One very random school day 😭
                 </p>
 
                 <h1>
-                    I went just to see you. 😭
+                    Sirf aapko dekhne gaya tha. 😭💗
                 </h1>
 
                 <p>
-                    There was going to be
-                    no proper studying that day.
+                    Us din proper studies bhi nhi honi thi
+                    <br><br>
+                    Aur somehow
+                    school mein sirf THREE students aaye the😭✋🏻
                 </p>
 
                 <p>
-                    And somehow,
-                    only three students
-                    actually came to school.
+                    THREE.
+                    <br><br>
+                    Matlab school ne practically
+                    bola tha "bhai ghar pe raho"😭
                 </p>
 
                 <p>
-                    Yes.
+                    But mein phir bhi gaya.
+                </p>
+
+                <p>
+                    Kyun?
+                    <br><br>
+                    Koi important class thi?
                     <br>
-                    Three. 😭✋🏻
-                </p>
-
-                <p>
-                    And I still went.
+                    Nahi.
+                    <br><br>
+                    Koi exam tha?
+                    <br>
+                    Nahi.
+                    <br><br>
+                    Koi special event tha?
+                    <br>
+                    Nahi😭
                 </p>
 
                 <p class="quiet">
-                    Not because there was
-                    anything particularly important
-                    happening at school.
+                    Bas aapko dekhna tha. 🥹💗
                 </p>
 
                 <p>
-                    I just wanted to see you.
+                    Kabhi kabhi reason
+                    itna hi hota hai
                 </p>
 
                 <p>
-                    Sometimes that's really
-                    all the reason you need.
+                    Aapko dekhna tha
+                    toh school aa gaya😭✋🏻
+                </p>
+
+                <p>
+                    Aur phir mein aapko dekh raha tha...
+                    <br><br>
+                    aur aapne notice kar liya😭
                 </p>
 
                 <button id="preBirthdayMomentButton">
-                    And then you noticed me... 👀
+                    Phir aapne poocha... 👀
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       PRE-BIRTHDAY — KYA HUA
+       KYA HUA
        ===================================================== */
 
     else if (event.target.id === "preBirthdayMomentButton") {
@@ -1223,7 +1612,7 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    That little moment
+                    That one little moment 👀
                 </p>
 
                 <h1>
@@ -1231,59 +1620,83 @@ document.addEventListener("click", (event) => {
                 </h1>
 
                 <p>
-                    There was this moment
-                    when I was looking at you
-                    while you were looking somewhere else.
-                </p>
-
-                <p>
-                    Then you noticed.
-                </p>
-
-                <p>
-                    You looked at me and asked:
+                    Mein aapko dekh raha tha
                     <br><br>
+                    Aapne notice kiya
+                    <br><br>
+                    Aur phir seedha meri taraf dekh ke
+                    pooch liya
+                </p>
+
+                <p class="quiet">
                     <i>
                         "Kya hua?"
                     </i>
                 </p>
 
                 <p>
-                    And my brain basically
-                    forgot how conversations work. 😭✋🏻
-                </p>
-
-                <p class="quiet">
-                    Because apparently,
-                    looking at you for a little too long
-                    is enough to make a bhondu
-                    completely lose his words. 🫣💗
+                    And my brain just...
+                    <br><br>
+                    LEFT THE CHAT😭✋🏻
                 </p>
 
                 <p>
-                    I still remember that moment
-                    because it was so simple.
+                    Mein bas aapko dekh raha tha
+                    aur ab suddenly
+                    mujhe answer bhi dena tha😭
+                </p>
+
+                <p>
+                    Matlab madam
+                    aap hi bata do
+                    kya hua hoga😭😭
+                </p>
+
+                <p>
+                    Duniya ki sabse sundar cheez
+                    mere saamne khadi ho
+                    toh obviously
+                    thoda toh dekhunga na😭💗
                 </p>
 
                 <p class="quiet">
-                    Just you noticing me.
-                    <br>
-                    And me being very happy
-                    that you did.
+                    Aur sabse cute part?
+                    <br><br>
+                    Aapne notice kiya. 🥹💗
+                </p>
+
+                <p>
+                    Itna simple moment tha
+                    but somehow
+                    mere dimaag mein reh gaya
+                </p>
+
+                <p>
+                    Kyunki aapko dekhna
+                    toh mein pehle bhi karta tha
+                    <br><br>
+                    but uss din
+                    aapne mujhe dekh liya tha
+                </p>
+
+                <p class="quiet">
+                    Aur mein uss cheez se
+                    unnecessarily khush tha😭🫶🏻
                 </p>
 
                 <button id="giftsButton">
-                    Now... the little things I got to keep → 🎁
+                    Ab aate hain un chhoti cheezon par jo maine sambhal ke rakhi hain... 🎁
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       GIFTS / PHYSICAL MEMORIES
+       GIFTS
        ===================================================== */
 
     else if (event.target.id === "giftsButton") {
@@ -1293,25 +1706,24 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    The little collection
+                    The little collection 🎀
                 </p>
 
                 <h1>
-                    Things I got to keep. 🎁🎀
+                    Aapki chhoti chhoti cheezein... 💗
                 </h1>
 
                 <p>
                     Some things are valuable
-                    because of what they are.
+                    because of what they are
+                    <br><br>
+                    aur kuch cheezein valuable hoti hain
+                    because of WHO gave them to you😭💗
                 </p>
 
                 <p>
-                    And some are valuable
-                    because of who they came from.
-                </p>
-
-                <p class="quiet">
-                    These belong to the second category. 🥹
+                    Aur ye sab
+                    obviously second category mein aata hai😭
                 </p>
 
                 <div class="artifact-list">
@@ -1330,8 +1742,13 @@ document.addEventListener("click", (event) => {
                         </div>
 
                         <p>
-                            Something written by you
-                            that I got to keep.
+                            Aapke haath se likha hua
+                            <br><br>
+                            Aapke words
+                            <br>
+                            Aapki handwriting
+                            <br><br>
+                            Aur mere paas. 🥹💗
                         </p>
 
                     </div>
@@ -1340,7 +1757,7 @@ document.addEventListener("click", (event) => {
                     <div class="artifact-card">
 
                         <h2>
-                            📝 Your little note
+                            📝 Your Thank You note
                         </h2>
 
                         <div class="artifact-photo">
@@ -1351,9 +1768,13 @@ document.addEventListener("click", (event) => {
                         </div>
 
                         <p>
-                            Small enough to hold in one hand.
-                            <br>
-                            Special enough to keep.
+                            Chhota sa note tha
+                            <br><br>
+                            But pehli baar
+                            aapne mujhe kuch diya tha
+                            <br><br>
+                            toh obviously
+                            mereko yaad rehna hi tha😭💗
                         </p>
 
                     </div>
@@ -1373,9 +1794,12 @@ document.addEventListener("click", (event) => {
                         </div>
 
                         <p>
-                            A birthday gift from you.
+                            Aapne mujhe birthday pe diya tha💗
                             <br><br>
-                            Yes, I remember. 😭💗
+                            Ek chocolate...
+                            <br>
+                            but mere liye
+                            ek aur little memory😭🫶🏻
                         </p>
 
                     </div>
@@ -1395,10 +1819,13 @@ document.addEventListener("click", (event) => {
                         </div>
 
                         <p>
-                            December 4, 2025.
+                            December 4, 2025
                             <br><br>
-                            One tiny exchange.
-                            One very memorable day.
+                            Ek chhota sa exchange
+                            <br><br>
+                            Aur mujhe kya pata tha
+                            ki ye bhi ek din
+                            memory museum ka part banega😭🎀
                         </p>
 
                     </div>
@@ -1418,51 +1845,34 @@ document.addEventListener("click", (event) => {
                         </div>
 
                         <p>
-                            Wapis dena bhul gya tha😭😭
+                            Aapka bhondu wapis dena bhul gaya😭😭
+                            <br><br>
                             <br>
-                            One bhulakkad bhondu.
-                            😭✌🏻
+                            One bhulakkad bhondu
+                            <br>
+                            One permanent memory😂💗
                         </p>
 
                     </div>
-
-                    <!--
-                    ADD MORE GIFTS HERE.
-
-                    <div class="artifact-card">
-
-                        <h2>
-                            🎁 Gift name
-                        </h2>
-
-                        <div class="artifact-photo">
-                            <img
-                                src="gift-photo.jpg"
-                                alt="Gift name"
-                            >
-                        </div>
-
-                        <p>
-                            Your personal little story here. 💗
-                        </p>
-
-                    </div>
-                    -->
 
                 </div>
 
                 <p class="quiet">
-                    A tiny museum of things
-                    that became memories. 🎀
+                    Ye objects nhi hain madam
+                    <br><br>
+                    Ye memories hain
+                    jo galti se objects ke form mein
+                    mere paas reh gayi😭💗
                 </p>
 
                 <button id="birthdayChapterButton">
-                    Now... December 20 → 🎂
+                    Aur phir aaya mera birthday... 🎂
                 </button>
 
             </section>
 
         `;
+
     }
 
 
@@ -1481,53 +1891,66 @@ document.addEventListener("click", (event) => {
                 </p>
 
                 <h1>
-                    My birthday. 🎂
+                    My birthdayyyy 🎂💗
                 </h1>
 
                 <p>
-                    I remember that morning
-                    surprisingly clearly.
+                    Subah ka woh foggy environment
+                    <br>
+                    Mera birthday outfit
+                    <br>
+                    Aur phir aap
                 </p>
 
                 <p>
-                    It was foggy.
-                </p>
-
-                <p>
-                    I had my birthday outfit on.
-                </p>
-
-                <p>
-                    And then you noticed.
-                </p>
-
-                <p>
-                    You looked at me and said:
+                    Aapne mujhe dekha
                     <br><br>
-                    <b>
-                        "Acche lag rahe ho."
-                    </b>
+                    Aur casually bol diya
                 </p>
 
                 <p class="quiet">
-                    You probably had no idea
-                    how much that one sentence
-                    was going to stay in my head. 😭🫣
+                    <b>
+                        "Acche lag rahe ho"
+                    </b>
                 </p>
 
                 <p>
-                    Coming from you,
-                    compliments were never
-                    exactly easy to ignore.
+                    MADAMMMMM 😭😭😭💗
+                </p>
+
+                <p>
+                    Aapko shayad
+                    ek normal compliment laga hoga
+                    <br><br>
+                    Mere liye?
+                    <br>
+                    Pura din ban gaya tha😭✋🏻💗
+                </p>
+
+                <p>
+                    Aapko shayad idea bhi nhi hai
+                    ki aapki chhoti chhoti baatein
+                    mere dimaag mein
+                    kitni der tak reh jaati hain😭
+                </p>
+
+                <p>
+                    Birthday tha mera
+                    <br><br>
+                    But somehow
+                    aapke saath spend kiya hua
+                    woh time hi
+                    sabse special part ban gaya💗
                 </p>
 
                 <button id="birthdayEyeContactButton">
-                    And then the day kept going... → 🥹
+                    Aur phir aapka plan saamne aaya... 🎂
                 </button>
 
             </section>
 
         `;
+
     }
 
 
@@ -1542,57 +1965,72 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    December 20 — later
+                    December 20 — later 🎂
                 </p>
 
                 <h1>
-                    And then came your plan. 🎂💗
+                    Aapne cake plan kiya tha😭💗
                 </h1>
 
                 <p>
-                    You had planned the cake yourself.
-                </p>
-
-                <p>
-                    And somehow,
-                    you made it happen
-                    in the middle of everything
-                    going on that day.
-                </p>
-
-                <p>
-                    We got our little birthday moment.
-                </p>
-
-                <p>
-                    You cut the cake.
+                    Aapne khud cake plan kiya
                     <br>
-                    You fed me cake.
-                    <br>
-                    I fed you cake.
+                    Sab kuch manage karte hue
                 </p>
 
                 <p>
-                    And honestly,
-                    the thing I remember most
-                    is that you had put thought into it.
+                    Aur phir humara
+                    woh chhota sa birthday moment bana💗
+                </p>
+
+                <p>
+                    Cake cut hua
+                    <br>
+                    Aapne mujhe khilaya
+                    <br>
+                    Maine aapko khilaya
+                    <br>
+                    Aur mein andar se
+                    already pighal chuka tha😭🫠💗
+                </p>
+
+                <p>
+                    But the thing I remember most
+                    isn't even just the cake
                 </p>
 
                 <p class="quiet">
                     You planned it.
                     <br>
-                    You made the effort.
+                    You put effort into it.
                     <br>
-                    And I noticed every bit of it. 🥹💗
+                    You wanted to make
+                    my birthday special.
+                    🥹💗
+                </p>
+
+                <p>
+                    Aur mereko woh cheez
+                    bohot zyada matter karti hai
+                </p>
+
+                <p>
+                    Kyuki jab koi aapke liye
+                    thoda sa effort karta hai na
+                    <br><br>
+                    toh woh effort
+                    actual mein bohot bada lagta hai
+                    when it comes from the right person💗
                 </p>
 
                 <button id="birthdayRockButton">
-                    Then came the rock → 🪨
+                    Aur phir... THE ROCK 🪨😭
                 </button>
 
             </section>
 
         `;
+
     }
 
 
@@ -1607,66 +2045,96 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    The rock
+                    THE ROCK 🪨💗
                 </p>
 
                 <h1>
-                    It was freezing. 😭
+                    11/10 Rock btw 😭✋🏻
                 </h1>
 
                 <p>
-                    It was genuinely cold.
+                    Kinni thand lag rahi thi
+                    <br>
+                    but challenge tha
+                    toh obviously karna tha😭🫶🏻
                 </p>
 
                 <p>
-                    But you had planned it,
-                    so obviously
-                    we were going through with it.
+                    Aur yahin
+                    aapne mera cake cut kiya
+                    <br>
+                    yahin mujhe birthday letter diya
+                    <br>
+                    aur December 20 ki
+                    itni saari memories yahin hain💗
                 </p>
 
                 <p>
-                    And there we were,
-                    sitting there in the cold,
-                    doing the thing
-                    we had planned.
-                </p>
-
-                <p>
-                    Then you gave me
-                    my handwritten birthday letter.
+                    Aur ab school walon ne
+                    isko grass se cover kar diya😭😭
                 </p>
 
                 <p class="quiet">
-                    Your handwriting.
+                    WHO GAVE THEM PERMISSION
                     <br>
-                    Your words.
-                    <br>
-                    My birthday.
-                    💌
+                    HUM DONO SE TOH NAHI PUCHA😭✋🏻
                 </p>
 
                 <p>
-                    I don't think I need
-                    to explain much more than that.
+                    But honestly...
+                    <br><br>
+                    uss rock ka important hona
+                    rock ki wajah se nhi tha
                 </p>
 
                 <p class="quiet">
-                    I just know
-                    I was very lucky that day. 🥹
+                    Aap wahan thi. 💗
+                </p>
+
+                <p>
+                    Aur phir aapne
+                    mujhe woh handwritten letter diya
+                </p>
+
+                <p>
+                    Aapki handwriting
+                    <br>
+                    Aapke words
+                    <br>
+                    Mere birthday pe
+                    aapka likha hua kuch
+                </p>
+
+                <p>
+                    Mereko aur kya chahiye tha uss din😭🫶🏻💗
+                </p>
+
+                <p>
+                    Honestly
+                    mujhe lagta hai
+                    uss din mein jo feel kar raha tha
+                    woh properly explain hi nhi kar sakta
+                </p>
+
+                <p class="quiet">
+                    Bas itna samajh lo...
+                    <br><br>
+                    I felt very very lucky. 🥹💗
                 </p>
 
                 <button id="birthdayClassroomButton">
-                    And then came another memory... → 🫶🏻
+                    Aur phir hum ek empty classroom mein gaye... 🥹
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       DECEMBER 20 — EMPTY CLASSROOM
+       DECEMBER 20 — CLASSROOM
        ===================================================== */
 
     else if (event.target.id === "birthdayClassroomButton") {
@@ -1676,66 +2144,97 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    Later that day
+                    Later that day 🎶
                 </p>
 
                 <h1>
-                    An empty classroom. 🥹
+                    THAT classroom 😭💗
                 </h1>
 
                 <p>
-                    We ended up in a classroom
-                    that belonged to neither of us.
+                    Classroom actually
+                    hum dono ka tha bhi nhi😭
                 </p>
 
                 <p>
-                    Just an empty classroom.
+                    Bas ek empty classroom
+                    <br><br>
+                    But phir aap wahan thi
                     <br>
-                    Nothing particularly special about it.
+                    toh obviously
+                    woh bhi memory ban gaya💗
                 </p>
 
                 <p>
-                    Except that you were there.
+                    Aur phir...
+                    <br><br>
+                    AAPNE MERE LIYE GAAYA😭😭😭
                 </p>
 
                 <p>
-                    And then you sang for me.
+                    Woh song
+                    jo humari friendship se connected hai
+                    <br><br>
+                    Aur aap mere liye ga rahi thi
                 </p>
 
                 <p>
-                    I was sitting there
-                    trying very hard
-                    to behave like a normal human being.
+                    Main bahar se:
+                    <br>
+                    "😶"
+                    <br><br>
+                    Andar se:
+                    <br>
+                    "BRO WHAT DO I DO WITH MY FACE😭😭😭"
+                </p>
+
+                <p>
+                    Literally peeche dekh kr paani peene ki acting kr rha tha
+                    because I was blushing
+                    SO SO SO HARD😭✋🏻💕
+                </p>
+
+                <p>
+                    Aap ga rahi thi
+                    aur mein normal banne ki acting kr raha tha
+                    <br><br>
+                    Failed miserably😭
                 </p>
 
                 <p class="quiet">
-                    I failed. 😭✋🏻
-                </p>
-
-                <p>
-                    I literally pretended
-                    to drink water
-                    because I was blushing so much.
-                </p>
-
-                <p class="quiet">
-                    I still remember
-                    exactly how that felt.
+                    But I remember your voice.
+                    <br>
+                    I remember that room.
+                    <br>
+                    I remember that feeling.
                     🥹💗
                 </p>
 
+                <p>
+                    Aur mujhe lagta hai
+                    kuch memories ki value
+                    isi mein hoti hai
+                    ki unko explain karne ke liye
+                    bohot kuch bolna bhi nhi padta
+                </p>
+
+                <p class="quiet">
+                    Bas yaad hoti hain. 💗
+                </p>
+
                 <button id="birthdayReflectionButton">
-                    I really did remember all of it → 💗
+                    Aur haan... mein ye sab bhoola nhi hoon 😭
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       DECEMBER 20 — COMPLETE RECAP
+       DECEMBER 20 — RECAP
        ===================================================== */
 
     else if (event.target.id === "birthdayReflectionButton") {
@@ -1749,98 +2248,91 @@ document.addEventListener("click", (event) => {
                 </p>
 
                 <h1>
-                    I remember. 🥹
+                    I REMEMBER ALL OF IT. 🥹💗
                 </h1>
 
                 <p>
-                    I remember the foggy morning.
+                    Foggy morning yaad hai
+                    <br>
+                    Mera birthday outfit yaad hai
+                    <br>
+                    Aapka mujhe dekhna yaad hai
+                    <br>
+                    Aapka "Acche lag rahe ho" yaad hai😭
                 </p>
 
                 <p>
-                    I remember my birthday outfit.
+                    Aapka cake plan karna yaad hai
+                    <br>
+                    Cake khilana yaad hai
+                    <br>
+                    Ek dusre ko cake khilana yaad hai
                 </p>
 
                 <p>
-                    I remember you noticing it.
+                    Woh freezing cold yaad hai
+                    <br>
+                    Rock yaad hai
+                    <br>
+                    Aapka handwritten letter yaad hai
                 </p>
 
                 <p>
-                    I remember you saying
-                    "Acche lag rahe ho."
+                    Empty classroom yaad hai
+                    <br>
+                    Aapka mere liye gaana yaad hai
+                    <br>
+                    Aur mera paani peene ka natak
+                    because mein blush kar raha tha😭✋🏻
                 </p>
 
                 <p>
-                    I remember that little moment
-                    that morning.
-                </p>
-
-                <p>
-                    I remember the cake
-                    you had planned.
-                </p>
-
-                <p>
-                    I remember you feeding me cake
-                    and me feeding you cake.
-                </p>
-
-                <p>
-                    I remember how cold it was.
-                </p>
-
-                <p>
-                    I remember the rock.
-                </p>
-
-                <p>
-                    I remember the handwritten letter.
-                </p>
-
-                <p>
-                    I remember that empty classroom.
-                </p>
-
-                <p>
-                    I remember you singing.
-                </p>
-
-                <p>
-                    I remember pretending
-                    to drink water
-                    because I was blushing.
-                    😭
-                </p>
-
-                <p class="quiet">
                     Basically...
                     <br><br>
-                    yes.
-                    <br>
-                    I remember all of it.
-                    💗
+                    <b>
+                        YES
+                        <br>
+                        I REMEMBER. 💗
+                    </b>
                 </p>
 
                 <p>
-                    And I think that's what made
-                    that birthday so special.
+                    Aur mujhe lagta hai
+                    uss din ki sabse beautiful cheez
+                    cake ya letter ya song bhi nhi thi
                 </p>
 
                 <p class="quiet">
-                    You had planned things.
+                    It was the effort behind all of it. 🥹🫶🏻
+                </p>
+
+                <p>
+                    Aapne mere liye
+                    apne din mein jagah banayi
                     <br>
-                    You put effort into them.
+                    time diya
                     <br>
+                    plan kiya
+                    <br>
+                    aur mujhe feel karwaya
+                    ki mera birthday
+                    aapke liye bhi important tha💗
+                </p>
+
+                <p>
                     And I noticed.
-                    🥹🫶🏻
+                    <br><br>
+                    Har cheez. 🥹
                 </p>
 
                 <button id="dreamsButton">
-                    Now there's something I want to tell you → 👑
+                    Ab aapke dreams ki baat karte hain 👑
                 </button>
 
             </section>
 
         `;
+
     }
 
 
@@ -1855,77 +2347,110 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    A little page for your dreams
+                    A little page for your dreams 👑
                 </p>
 
                 <h1>
-                    I hope you go for it. ✨
+                    Aapko model banna hai na? ✨
                 </h1>
 
                 <p>
-                    I know you want to become a model.
+                    Toh suno madam...
+                    <br><br>
+                    I genuinely want you to go for it💗
                 </p>
 
                 <p>
-                    And I genuinely hope
-                    you chase that dream.
+                    Not just because
+                    "you look extremely gorgeous"
+                    <br><br>
+                    But because
+                    I know how much
+                    this dream means to you
                 </p>
 
                 <p>
-                    Because I don't think
-                    you need to become someone else
-                    to deserve that dream.
+                    Aur mujhe bas ye chahiye
+                    ki jab bhi aap uss dream ke peeche jao
+                    <br><br>
+                    toh aapko khud par doubt na ho
+                </p>
+
+                <p>
+                    Aapko kisi aur jaisa banne ki zarurat nhi hai
+                    <br>
+                    Kisi aur ke standard ke according
+                    khud ko change karne ki zarurat nhi hai
                 </p>
 
                 <p class="quiet">
-                    You're already perfect
-                    exactly as you are. 🥹💗
+                    YOU'RE ALREADY PERFECT
+                    EXACTLY AS YOU ARE. 🥹💗
+                </p>
+                    Aap jis tarah se hasti ho
+                    <br>
+                    jis tarah se excited hoti ho
+                    <br>
+                    jis tarah se gussa karti ho
+                    <br>
+                    jis tarah se bachha ban jaati ho
+                    <br>
+                    jis tarah se apne close logon ke saamne
+                    comfortable hoti ho
                 </p>
 
                 <p>
-                    I just hope you get the chance
-                    to show the world
-                    everything that makes you,
-                    <i>you.</i>
-                </p>
-
-                <p>
-                    I hope you walk into every room
-                    knowing your own worth.
-                </p>
-
-                <p>
-                    I hope you keep dreaming big.
-                </p>
-
-                <p>
-                    And when that day comes...
+                    That's YOU.
                 </p>
 
                 <p class="quiet">
-                    your bhondu is going to be
-                    <b>insanely proud.</b> 😭🫶🏻
+                    Aur mujhe woh YOU bohot bohot bohot pasand hai. 💗
                 </p>
 
                 <p>
-                    Although...
-                    if you look that good doing it,
-                    I might have to pretend
-                    I wasn't staring. 🫣
+                    So when that day comes
+                    jab aap apna dream actually chase kar rahi hogi
+                    <br><br>
+                    I hope aapko ek cheez yaad rahe
+                </p>
+
+                <p>
+                    there is one bhondu
+                    jo aapko dekh ke
+                    <br><br>
+                    <b>
+                        INSANELY PROUD
+                    </b>
+                    hone wala hai😭🫶🏻💗
+                </p>
+
+                <p>
+                    Aur haan...
+                    <br><br>
+                    agar aap itni sundar lagogi
+                    toh mein obviously thoda stare karunga😭🫣
+                    (Kya mtlb abhi bhi krte ho😭✌🏻, Ab ho hi inni sundar toh kya kar skta hun😭💕)
+                </p>
+
+                <p class="quiet">
+                    Professional observation hai madam
+                    <br>
+                    😭✋🏻😂
                 </p>
 
                 <button id="herBirthdayButton">
-                    Now let's celebrate you → 🎀
+                    Ab finally... your day 👑🎀
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       SEPTEMBER 8
+       SEPTEMBER 8 — HER BIRTHDAY
        ===================================================== */
 
     else if (event.target.id === "herBirthdayButton") {
@@ -1935,572 +2460,1013 @@ document.addEventListener("click", (event) => {
             <section class="story-page fade-in">
 
                 <p class="small-text">
-                    September 8, 2026 — 1:15 PM
+                    September 8, 2026 — 1:15 PM 🎀
                 </p>
 
                 <h1>
-                    Your turn. 👑🎀
+                    Happiest 15th Birthdayyy Princessss 👑💗
                 </h1>
 
                 <p>
-                    And finally...
-                    we've reached your day.
+                    Kabhi kabhi sochta hoon...
+                    <br><br>
+                    <b>
+                        September 8, 2011.
+                    </b>
                 </p>
 
                 <p>
-                    Fifteen years ago,
-                    at 1:15 PM,
-                    you entered this world.
+                    1:15 PM.
+                    <br><br>
+                    Ek normal si date aur ek normal sa time
+                    lag sakta hai kisi aur ko...
                 </p>
 
                 <p class="quiet">
-                    And years later,
-                    somehow,
-                    you became one of
-                    my favourite people in it.
+                    But mere liye?
+                    <br><br>
+                    Woh din
+                    <br>
+                    bohot, bohot special tha.
+                    🥹🎀💗
+                </p>
+
+                <p>
+                    Kyuki uss din
+                    duniya mein
+                    <br><br>
+                    <b>
+                        AAP AAYI THI.
+                    </b>
+                </p>
+
+                <p>
+                    Us waqt kisi ko kya pata tha
+                    ki woh chhoti si baby
+                    <br><br>
+                    ek din badi hogi,
+                    apne dreams dekhegi,
+                    itni saari logon ki life mein
+                    apni jagah banayegi...
+                </p>
+
+                <p>
+                    Aur mujhe toh bilkul bhi idea nahi tha
+                    ki years later
+                    main yahan baith kar
+                    aapke birthday ke liye
+                    itni saari memories
+                    ek website mein likh raha hunga😭💗
+                </p>
+
+                <p class="quiet">
+                    But I'm really glad
+                    that September 8 happened. 🥹🌷
+                </p>
+
+                <p>
+                    Because if it hadn't...
+                    <br><br>
+                    I wouldn't have met you.
+                    <br>
+                    I wouldn't have known you.
+                    <br>
+                    I wouldn't have heard your laugh.
+                    <br>
+                    I wouldn't have seen
+                    all your little sides.
+                    <br>
+                    I wouldn't have these memories.
+                </p>
+
+                <p>
+                    So today,
+                    I'm not just celebrating
+                    another birthday.
+                </p>
+
+                <p class="quiet">
+                    I'm celebrating
+                    the day someone incredibly special
+                    came into this world. 💗🎀
+                </p>
+
+                <p>
+                    And honestly...
+                    <br><br>
+                    I'm really, really grateful
+                    that somewhere along the way,
+                    our paths crossed too. 🥹🫶🏻
+                </p>
+
+                <p>
+                    15 years ago,
+                    you were just beginning your story.
+                    <br><br>
+                    And now,
+                    you're here...
+                    with dreams,
+                    memories,
+                    people who love you,
+                    and an entire future
+                    waiting for you.
+                </p>
+
+                <p>
+                    Mujhe nhi pata
+                    life ne aapke liye
+                    kya kya likha hai
+                </p>
+
+                <p>
+                    But I genuinely hope
+                    ki jo bhi likha hai
+                    usmein bohot saari khushiyan ho
+                    <br>
+                    bohot saari hasi ho
+                    <br>
+                    bohot saare dreams ho
+                    <br>
+                    aur bohot saare moments ho
+                    jahan aap khud par proud feel karo aur kabhi apne aap ko chota feel na karo, aur agar kabhi aisi naubat aati hai... Mein hu naa🫶🏻💕
+                </p>
+
+                <p>
+                    I hope aap apne dreams chase karo
+                    <br>
+                    I hope aap naye places dekho
+                    <br>
+                    I hope aap bohot kuch seekho
+                    <br>
+                    I hope aap itna haso
+                    ki cheeks dukhne lage😭😂
+                </p>
+
+                <p class="quiet">
+                    And more than anything...
+                    <br><br>
+                    I hope you always remember
+                    how special you are.
                     🥹💗
                 </p>
 
-                <p>
-                    Today isn't about
-                    everything that's already happened.
-                </p>
-
-                <p>
-                    It's about everything
-                    that's still waiting for you.
-                </p>
-
-                <p>
-                    Your dreams.
-                    <br>
-                    Your plans.
-                    <br>
-                    Your little goals.
-                    <br>
-                    Your biggest ones.
-                </p>
-
-                <p>
-                    All the places you'll go.
-                    <br>
-                    All the things you'll learn.
-                    <br>
-                    All the versions of yourself
-                    you haven't met yet.
-                </p>
-
-                <p class="quiet">
-                    I hope this year is kind to you.
-                    <br>
-                    I hope it makes you smile a lot.
-                    <br>
-                    And I hope it gives you
-                    countless reasons to be proud. 🌷
-                </p>
-
-                <button id="finalButton">
-                    One last little page... 💌
+                <button id="birthdayNextButton">
+                    Aur ek cheez... 🥹
                 </button>
 
             </section>
 
         `;
+
     }
 
 
     /* =====================================================
-       FINAL PAGE
+       BIRTHDAY — REASSURANCE
        ===================================================== */
 
-    else if (event.target.id === "finalButton") {
+    else if (event.target.id === "birthdayNextButton") {
 
         app.innerHTML = `
 
-            <section class="story-page fade-in final-page">
+            <section class="story-page fade-in">
 
                 <p class="small-text">
-                    For my Princess
+                    Your 15th chapter 🎀
                 </p>
 
                 <h1>
-                    One last thing. 🎀
+                    This year is yours. 💗
                 </h1>
 
                 <p>
-                    I started making this
-                    because I wanted to give you
-                    something for your birthday.
+                    Aapko kabhi low feel ho
+                    <br>
+                    kabhi gussa aaye
+                    <br>
+                    kabhi rona aaye
+                    <br>
+                    kabhi bas chup rehna ho
                 </p>
 
                 <p>
-                    But while putting everything together,
-                    I realised I was doing something
-                    a little different.
-                </p>
-
-                <p>
-                    I was going through
-                    a year of my life
-                    and noticing how often
-                    you were somewhere inside it.
-                </p>
-
-                <p>
-                    In the places.
-                    <br>
-                    In the conversations.
-                    <br>
-                    In the little things.
-                    <br>
-                    In the days I remember.
+                    You don't have to pretend
+                    ki you're okay
+                    just because everyone expects you
+                    to be okay.
                 </p>
 
                 <p class="quiet">
-                    And I think that's
-                    what makes you so special to me.
-                    🥹💗
-                </p>
-
-                <p>
-                    Not one giant moment.
-                </p>
-
-                <p>
-                    Not one particular day.
-                </p>
-
-                <p>
-                    It's all the little moments
-                    put together.
-                </p>
-
-                <p>
-                    The girl I first noticed.
+                    Aap strong ho.
                     <br><br>
-                    The girl I was nervous around.
+                    But strong hone ka matlab
+                    ye nhi ki aapko sab kuch
+                    akele sehna pade. 🫶🏻💗
+                </p>
+
+                <p>
+                    Gussa ho toh gussa ho
+                    <br>
+                    Rona hai toh ro
+                    <br>
+                    Bachha banna hai toh bachha bano
+                    <br>
+                    Khush ho toh pagalo ki tarah haso😭
+                </p>
+
+                <p class="quiet">
+                    Bas aap raho. 💗
+                </p>
+
+                <p>
+                    Aur apne dreams ko
+                    kabhi chhota mat samajhna.
+                </p>
+
+                <p>
+                    Model banna hai?
+                    <br>
+                    Go for it.
                     <br><br>
-                    The girl I asked to be my friend.
+                    Kuch aur karna hai?
+                    <br>
+                    Go for it.
                     <br><br>
-                    The girl who slowly became
-                    someone I could tell things to.
+                    Kuch completely new try karna hai?
+                    <br>
+                    GO FOR ITTTT😭💗
+                </p>
+
+                <p>
+                    There is so much life
+                    waiting for you.
+                </p>
+
+                <p class="quiet">
+                    And I hope you walk into it
+                    with confidence,
+                    with that smile,
+                    and with absolutely no doubt
+                    that you deserve good things. 🎀💗
+                </p>
+
+                <button id="reassuranceButton">
+                    Ek last important cheez... 🥹
+                </button>
+
+            </section>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       REASSURANCE
+       ===================================================== */
+
+    else if (event.target.id === "reassuranceButton") {
+
+        app.innerHTML = `
+
+            <section class="story-page fade-in">
+
+                <p class="small-text">
+                    Before the last page...
+                </p>
+
+                <h1>
+                    Please don't feel any pressure because of this 💗
+                </h1>
+
+                <p>
+                    Ek cheez seriously bolni hai
+                    <br><br>
+                    Aur ye shayad
+                    poori website ki
+                    sabse important cheez hai
+                </p>
+
+                <p>
+                    Aapko ye website dekh ke
+                    ye kabhi nhi sochna
+                    ki ab aapko kuch return karna hai
+                </p>
+
+                <p>
+                    Not because I made this
+                    <br>
+                    Not because maine itna time diya
+                    <br>
+                    Not because maine itni memories yaad rakhi
+                    <br>
+                    Not because I love you
+                </p>
+
+                <p class="quiet">
+                    I did all of this
+                    because I WANTED TO 💗
+                </p>
+
+                <p>
+                    Mujhe aapse kuch nhi chahiye, koi perfect reply nahi chahiye
+
+                <p>
+                    Aapko agar bas
+                    "pagal nahi toh😭"
+                    bolna hai
+                    <br>
+                    woh bhi chalega😂💗
+                </p>
+
+                <p class="quiet">
+                    Mere liye woh bhi enough hai, Mein bas chahta hun aapko accha lage, agar ye website 1% bhi aapko accha feel karati hai, socho mera kaam hogya🥹💗
+                </p>
+
+                <p>
+                    Aap mujhe kuch owe nhi karti
+
+                <p>
+                    Main aapki care karta hoon
+                    because I genuinely care about you
+                </p>
+
+                <p>
+                    Aur mere liye
+                    kisi ko care karna
+                    tabhi beautiful hai
+                    jab saamne wala safe feel kare
+                    <br><br>
+                    pressured nhi
+                </p>
+
+                <p class="quiet">
+                    So please...
+                    <br><br>
+                    bas enjoy your birthday. 🫶🏻🎀
+                </p>
+
+                <p>
+                    Smile karo
+                    <br>
+                    apne birthday ka maza lo
+                    <br>
+                    apne dreams ke baare mein socho
+                    <br>
+                    aur ek baar
+                    khud ko meri eyes se dekh lena
+                </p>
+
+                <p class="quiet">
+                    You'll understand
+                    why I think you're so special 🥹💗
                 </p>
 
                 <p>
                     And now...
                     <br><br>
-                    you're someone
-                    I genuinely care about
-                    more than I know how to put into words.
+                    enough serious bhondu talk😭✋🏻
                 </p>
 
                 <p>
-                    I don't need our story
-                    to be perfect.
-                </p>
-
-                <p>
-                    I just want it to keep
-                    being ours.
-                </p>
-
-                <p>
-                    More ordinary days.
-                    <br>
-                    More random conversations.
-                    <br>
-                    More laughter.
-                    <br>
-                    More memories
-                    we don't realise are memories
-                    until much later.
-                </p>
-
-                <p class="quiet">
-                    More little moments.
-                    <br>
-                    More stories.
-                    <br>
-                    More us. 🦋💗
-                </p>
-
-                <p>
-                    I don't know what every future chapter
-                    is going to look like.
-                </p>
-
-                <p>
-                    And that's okay.
-                </p>
-
-                <p class="quiet">
-                    We can just make it
-                    one memory at a time.
-                    🫶🏻
-                </p>
-
-                <p>
-                    And if you ever come back
-                    to this website someday,
-                    I hope you smile
-                    at how much effort
-                    your bhondu put into it. 😭🎀
-                </p>
-
-                <p>
-                    Because more than anything,
-                    I wanted this website
-                    to tell you one simple thing:
-                </p>
-
-                <p class="quiet">
-                    <b>
-                        I remember.
-                    </b>
-                </p>
-
-                <p>
-                    I remember the places.
-                    <br>
-                    I remember the days.
-                    <br>
-                    I remember the little things.
-                    <br><br>
-                    And most importantly...
-                    <br>
-                    I remember <i>you.</i>
-                </p>
-
-                <p class="quiet">
-                    And I'm still very glad
-                    I asked you that question
-                    on August 21. 🥹💗
-                </p>
-
-                <h2 class="final-love">
-                    Happiest 15th Birthday,
-                    Princess. 👑🌷
-                </h2>
-
-                <p>
-                    I hope you laugh a lot.
-                    <br>
-                    Dream even bigger.
-                    <br>
-                    Chase every beautiful thing
-                    you want for yourself.
-                    <br>
-                    And always remember
-                    just how wonderful you are.
-                </p>
-
-                <p class="quiet">
-                    Thank you for being you.
-                    <br><br>
-                    And thank you for letting
-                    your bhondu be a small part
-                    of your story too. 🫶🏻
-                </p>
-
-                <h2>
-                    I love you. 💗
-                </h2>
-
-                <p class="quiet">
-                    Happiesttt 15thh Birthdayyy
-                    Budhhuuuuu. 🎀💌
-                </p>
-
-                <p class="quiet">
-                    — Your bhondu mitrr 🦋
-                </p>
-
-            </section>
-
-        `;
-    }
-
-});
-/* =========================================================
-   REASSURANCE PAGE — NO PRESSURE, JUST LOVE
-   ========================================================= */
-
-document.addEventListener("click", (event) => {
-
-    if (event.target.id === "herBirthdayButton") {
-
-        app.innerHTML = `
-
-            <section class="story-page fade-in">
-
-                <p class="small-text">
-                    One thing I want you to know
-                </p>
-
-                <h1>
-                    No pressure. Just something from me. 💗
-                </h1>
-
-                <p>
-                    Before we get to your birthday...
-                    there's one thing I really want you to know.
-                </p>
-
-                <p>
-                    You never have to feel like
-                    you owe me anything because of this.
-                </p>
-
-                <p>
-                    Not because I made this.
-                    <br>
-                    Not because I remember so much.
-                    <br>
-                    Not because I care about you.
-                </p>
-
-                <p class="quiet">
-                    I do all of that
-                    because I genuinely want to. 🫶🏻
-                </p>
-
-                <p>
-                    You don't have to give me
-                    anything back.
-                </p>
-
-                <p>
-                    You don't have to find
-                    the perfect words.
-                </p>
-
-                <p>
-                    You don't have to make
-                    this moment anything more
-                    than what it naturally is.
-                </p>
-
-                <p>
-                    I just wanted to make something
-                    that made you smile.
-                </p>
-
-                <p>
-                    Something that showed you
-                    that the little things mattered.
-                </p>
-
-                <p class="quiet">
-                    Because they did.
-                    <br>
-                    They still do. 🥹💗
-                </p>
-
-                <p>
-                    Whatever life looks like,
-                    whatever changes,
-                    whatever new chapters come along...
-                </p>
-
-                <p>
-                    I'll always be grateful
-                    that I got to know you
-                    the way I did.
-                </p>
-
-                <p class="quiet">
-                    And I'm never going to
-                    turn that gratitude
-                    into an expectation. 🌷
-                </p>
-
-                <p>
-                    So please don't look at this
-                    and think you need to
-                    say or do anything.
-                </p>
-
-                <p>
-                    Just smile.
-                    <br>
-                    Maybe blush a little. 🫣
-                    <br>
-                    And enjoy your birthday.
-                </p>
-
-                <p class="quiet">
-                    That's genuinely enough for me. 💗
-                </p>
-
-                <p>
-                    I care about you.
-                    <br>
-                    A lot.
-                </p>
-
-                <p>
-                    And I think caring about someone
-                    should make them feel safe,
-                    not pressured.
-                </p>
-
-                <p class="quiet">
-                    So this page is simply me saying:
-                    <br><br>
-                    <b>
-                        You are loved.
-                        <br>
-                        You are appreciated.
-                        <br>
-                        And you don't owe me a thing.
-                    </b>
-                    🥹🫶🏻
-                </p>
-
-                <p>
-                    Now...
-                    enough serious bhondu talk. 😭✋🏻
-                </p>
-
-                <button id="reassuranceBirthdayButton">
-                    Okay, NOW it's your birthday → 🎀👑
-                </button>
-
-            </section>
-
-        `;
-    }
-
-
-    /* =====================================================
-       CONTINUE TO BIRTHDAY
-       ===================================================== */
-
-    else if (event.target.id === "reassuranceBirthdayButton") {
-
-        app.innerHTML = `
-
-            <section class="story-page fade-in">
-
-                <p class="small-text">
-                    September 8, 2026 — 1:15 PM
-                </p>
-
-                <h1>
-                    Your turn. 👑🎀
-                </h1>
-
-                <p>
-                    And finally...
-                    we've reached your day.
-                </p>
-
-                <p>
-                    Fifteen years ago,
-                    at 1:15 PM,
-                    you entered this world.
-                </p>
-
-                <p class="quiet">
-                    And years later,
-                    somehow,
-                    you became one of
-                    my favourite people in it.
-                    🥹💗
-                </p>
-
-                <p>
-                    Today isn't about
-                    everything that's already happened.
-                </p>
-
-                <p>
-                    It's about everything
-                    that's still waiting for you.
-                </p>
-
-                <p>
-                    Your dreams.
-                    <br>
-                    Your plans.
-                    <br>
-                    Your little goals.
-                    <br>
-                    Your biggest ones.
-                </p>
-
-                <p>
-                    All the places you'll go.
-                    <br>
-                    All the things you'll learn.
-                    <br>
-                    All the versions of yourself
-                    you haven't met yet.
-                </p>
-
-                <p class="quiet">
-                    I hope this year is kind to you.
-                    <br>
-                    I hope it makes you smile a lot.
-                    <br>
-                    And I hope it gives you
-                    countless reasons to be proud. 🌷
+                    Birthday girl ko
+                    itna emotional karke
+                    mein khud hi guilt mein chala jaunga😭😂
                 </p>
 
                 <button id="finalButton">
-                    One last little page... 💌
+                    Okay... ab ACTUALLY last page 💌
                 </button>
 
             </section>
 
         `;
+
+    }
+    /* =========================================================
+   FINAL PAGE
+   ========================================================= */
+
+else if (event.target.id === "finalButton") {
+
+    app.innerHTML = `
+
+        <section class="story-page fade-in">
+
+            <p class="small-text">
+                For my Princess 🎀
+            </p>
+
+            <h1>
+                Okay...
+                <br>
+                ab genuinely last baar bol raha hoon😭💗
+            </h1>
+
+            <p>
+                Sacchi laga
+                itni saari memories ke baad
+                mein bas Happy Birthday bolke
+                chala jaunga?😭
+            </p>
+
+            <p>
+                Aise kaise bach jaogii madam👀
+            </p>
+
+            <p>
+                Itna pyaar kara hai
+                <br>
+                Itni memories banayi hain
+                <br>
+                Itna kuch feel kiya hai
+                <br>
+                toh obviously
+                thoda aur bolna padega😭💗
+            </p>
+
+            <p>
+                Jab meine pehli baar aapko dekha tha
+                na
+                <br><br>
+                mereko bilkul idea nhi tha
+                ki ye ladki
+                ek din meri life mein
+                itni important ho jayegi
+            </p>
+
+            <p>
+                Mein toh bas dur se dekhta tha
+                <br>
+                khush hota tha
+                <br>
+                phir apne kaam mein lag jaata tha
+            </p>
+
+            <p>
+                Phir woh first conversation hui
+                <br>
+                jahan mein darr ke maare
+                properly behave bhi nhi kar paaya😭
+            </p>
+
+            <p>
+                Phir apology
+                <br>
+                30 minutes
+                <br>
+                DHAK DHAK DHAK
+                <br>
+                friendship
+            </p>
+
+            <p>
+                Phir handshake
+                <br>
+                fights
+                <br>
+                patch ups
+                <br>
+                3 AM conversations
+                <br>
+                Adibearr
+                <br>
+                edit
+                <br>
+                Thank You note
+                <br>
+                birthday
+                <br>
+                cake
+                <br>
+                rock
+                <br>
+                letter
+                <br>
+                song
+            </p>
+
+            <p>
+                Aur beech mein
+                pata hi nhi chala
+                kab aap meri
+                <br><br>
+                <b>
+                    COMFORT PERSON
+                </b>
+                <br><br>
+                ban gayi. 🥹💗
+            </p>
+
+            <p>
+                Aur honestly...
+                <br><br>
+                ye cheez mere liye
+                bohot bohot bohot special hai
+            </p>
+
+            <p>
+                Kyuki aapko jaanne ke baad
+                mein sirf ye nhi sochta
+                ki "meri crush kitni sundar hai"
+            </p>
+
+            <p>
+                Mein ye sochta hoon
+                ki
+                <br><br>
+                "Yaar...
+                <br>
+                this person is genuinely so pure hearted and precious to me, I love her" 💗
+            </p>
+
+            <p>
+                Aapka gussa
+                <br>
+                Aapki hasi
+                <br>
+                Aapka bachha banna
+                <br>
+                Aapka sensitive hona
+                <br>
+                Aapka comfortable hona
+                <br>
+                Aapka apne close people ke saamne
+                bilkul different side dikhana
+            </p>
+
+            <p>
+                Sab kuch.
+            </p>
+
+            <p class="quiet">
+                I love knowing YOU
+                <br>
+                not just knowing ABOUT you. 🥹💗
+            </p>
+
+            <p>
+                And if you ever ask me
+                meri favourite memory kya hai...
+            </p>
+
+            <p>
+                Mein genuinely answer nhi de paunga😭
+            </p>
+
+            <p>
+                First conversation?
+                <br>
+                Handshake?
+                <br>
+                That smile?
+                <br>
+                3 AM talks?
+                <br>
+                Birthday?
+                <br>
+                Cake?
+                <br>
+                Rock?
+                <br>
+                Letter?
+                <br>
+                Song?
+                <br>
+                Edit?
+                <br>
+                Thank You note?
+                <br>
+                Random school days?
+            </p>
+
+            <p>
+                I DON'T KNOWWW😭😭😭
+            </p>
+
+            <p class="quiet">
+                Because maybe
+                my favourite memory
+                was never one particular day
+                <br><br>
+                <b>
+                    My favourite memory
+                    was getting to know you. 💗🌷
+                </b>
+            </p>
+
+            <p>
+                Woh ladki
+                jise mein pehle dur se dekhta tha
+                <br><br>
+                Woh ladki
+                jiske saamne
+                pehli baar baat karte waqt
+                mera dimaag kaam nhi kar raha tha
+                <br><br>
+                Woh ladki
+                jisko apology bhejne mein
+                30 minute lage
+                <br><br>
+                Woh ladki
+                jisse mein friendship maang raha tha
+                heart DHAK DHAK karte hue
+            </p>
+
+            <p>
+                Woh ladki
+                jo dheere dheere
+                meri comfort person ban gayi
+            </p>
+
+            <p class="quiet">
+                YOU. 💗
+            </p>
+
+            <p>
+                And Princess...
+                <br><br>
+                I don't know
+                what the future looks like
+            </p>
+
+            <p>
+                I don't know
+                kitne aur random school days honge
+                <br>
+                kitni aur conversations hongi
+                <br>
+                kitni baar aap "Jaooo" bologi😭
+                <br>
+                kitni baar hum ek dusre ko pareshan karenge
+                <br>
+                aur kitni baar aap mujhe dekh ke
+                bologi
+                <br><br>
+                <i>
+                    "Thappad maar dungi" 😭✋🏻
+                </i>
+            </p>
+
+            <p>
+                But honestly?
+            </p>
+
+            <p class="quiet">
+                I WANT ALL OF IT. 💕
+            </p>
+
+            <p>
+                More random conversations
+                <br>
+                More laughter
+                <br>
+                More stupid jokes
+                <br>
+                More school memories
+                <br>
+                More little moments
+                <br>
+                More times where we look back later
+                and realise
+                "ohhh...
+                <br>
+                that was actually a really good memory😭💗"
+            </p>
+
+            <p>
+                And one thing
+                I really really really hope
+                you never forget...
+            </p>
+
+            <p>
+                You don't have to be perfect
+                around me
+            </p>
+
+            <p>
+                You don't have to hide
+                when you're sad
+                <br>
+                You don't have to hide
+                when you're angry
+                <br>
+                You don't have to pretend
+                you're okay
+            </p>
+
+            <p class="quiet">
+                Aap mere saamne
+                apni real self ho sakti ho aapko pata hai🫶🏻💗
+            </p>
+
+            <p>
+                Aur agar kabhi
+                aapko lage
+                ki you're not enough...
+            </p>
+
+            <p>
+                please...
+                <br><br>
+                meri aankhon se
+                ek baar khud ko dekhna🫶🏻💌
+            </p>
+
+            <p class="quiet">
+                You'll understand
+                why I keep saying
+                you're special. 🥹💗
+            </p>
+
+            <p>
+                Aapko model banna hai?
+                <br>
+                Go for it.
+                <br><br>
+                Aapko koi aur dream chase karna hai?
+                <br>
+                Go for it.
+                <br><br>
+                Aapko kuch naya try karna hai?
+                <br>
+                GO FOR ITTTT😭💗
+            </p>
+
+            <p>
+                Your bhondu
+                will be standing there
+                being unnecessarily proud of you😭🫶🏻
+            </p>
+
+            <p>
+                Aur haan...
+                <br><br>
+                thank you.
+            </p>
+
+            <p>
+                Thank you for that first reply
+                <br>
+                Thank you for saying yes
+                <br>
+                Thank you for every conversation
+                <br>
+                Thank you for every laugh
+                <br>
+                Thank you for every smile
+                <br>
+                Thank you for every random memory
+                <br>
+                Thank you for every time
+                you trusted me
+                <br>
+                Thank you for every time
+                you stayed
+            </p>
+
+            <p>
+                Thank you for letting me
+                know you
+            </p>
+
+            <p class="quiet">
+                And thank you...
+                <br><br>
+                for letting me become
+                a small part
+                of your story too. 🫂💗
+            </p>
+
+            <p>
+                Aur agar ek saal mein
+                itni saari memories ban gayi...
+                <br><br>
+                toh honestly
+                mereko bilkul idea nhi
+                next chapters mein
+                kya kya likha hai😭🎀
+            </p>
+
+            <p>
+                Bas itna pata hai
+                <br><br>
+                <b>
+                    HAMARI BOHOT SAARI MEMORIES
+                    ABHI BAAKI HAIN🌷💗✨
+                </b>
+            </p>
+
+            <p>
+                Aur haan...
+                <br><br>
+                I LOVVVVEEEEEEEEEEEEEEEE
+                YOUUUUUUUUUUUUUUUUUUUUU
+                AADITIIIIIIIIIIIIIIIII😭🫶🏻💕
+            </p>
+
+            <p>
+                Whether aap guccha ho😭🎀
+                <br>
+                low ho
+                <br>
+                sad ho
+                <br>
+                khush ho
+                <br>
+                dance kar rahi ho
+                <br>
+                mujhe roast kar rahi ho
+                <br>
+                ya bas quietly
+                apni duniya mein baithi ho...
+            </p>
+
+            <p class="quiet">
+                I LOVE YOUUUU
+                <br>
+                AND I CARE ABOUT YOUUU
+                <br>
+                AND I ALWAYS WILL. 💗
+            </p>
+
+            <p>
+                Aapko pata hai
+                mein perfect nhi hoon
+                <br>
+                Kabhi stupid hota hoon
+                <br>
+                Kabhi irritating
+                <br>
+                Kabhi galat
+                <br>
+                Kabhi overthinker
+                <br>
+                Kabhi full bhondu😭✋🏻
+            </p>
+
+            <p>
+                But I am trying.
+                <br><br>
+                Genuinely trying.
+            </p>
+
+            <p>
+                Because aap mere liye
+                important ho
+
+            <p>
+                So...
+                <br><br>
+                Happiesttt 15thh Birthdayyy
+                Budhhuuuuuuuuuuuuuuu 🎀💌
+            </p>
+
+            <p>
+                I hope today makes you smile
+                <br>
+                I hope this year makes you happier
+                <br>
+                I hope your dreams get closer
+                <br>
+                I hope you realise
+                just how loved and appreciated
+                you actually are
+            </p>
+
+            <p class="quiet">
+                And I hope
+                whenever you look back
+                at this website
+                <br><br>
+                you remember
+                that one bhondu
+                who sat down
+                and tried to fit
+                an entire year of memories
+                into a website
+                because apparently
+                <br><br>
+                <b>
+                    "Happy Birthday"
+                    wasn't enough😭✋🏻💗
+                </b>
+            </p>
+
+            <p>
+                I remember.
+            </p>
+
+            <p>
+                I remember the places
+                <br>
+                I remember the days
+                <br>
+                I remember the smiles
+                <br>
+                I remember the fights
+                <br>
+                I remember the laughs
+                <br>
+                I remember the little things
+                <br>
+                I remember your letters
+                <br>
+                I remember your voice
+                <br>
+                I remember your effort
+            </p>
+
+            <p class="quiet">
+                And most importantly...
+                <br><br>
+                <b>
+                    I REMEMBER YOU. 🥹💗
+                </b>
+            </p>
+
+            <p>
+                Thank you for being you
+                <br>
+                Thank you for letting me
+                know you
+                <br>
+                Thank you for becoming
+                one of the most beautiful
+                parts of this chapter
+            </p>
+
+            <p class="quiet">
+                Happiest birthday,
+                Princess. 🎀🌷
+            </p>
+
+            <p class="quiet">
+                Stay exactly as you are.
+                <br><br>
+                Keep dreaming.
+                <br>
+                Keep laughing.
+                <br>
+                Keep being that
+                wonderfully chaotic human
+                I somehow got lucky enough
+                to know. 🥹💗
+            </p>
+
+            <p>
+                And wherever life takes you...
+                <br><br>
+                I hope you always remember
+                that September 8
+                wasn't just another day.
+            </p>
+
+            <p class="quiet">
+                It was the day
+                the world got you. 🌷🎀💗
+            </p>
+
+            <p>
+                And years later,
+                somehow,
+                <br><br>
+                I got to know you.
+            </p>
+
+            <p class="quiet">
+                And I'm really,
+                really grateful for that. 🥹🫶🏻
+            </p>
+
+            <div class="final-signature">
+
+                <p>
+                    Aapka
+                </p>
+
+                <h2>
+                    Bhondu 💗
+                </h2>
+
+                <p>
+                    More than best friend,
+                    less than boyfriend😭✋🏻
+                </p>
+
+                <p>
+                    Aapka Ayush.
+                    <br>
+                    Aur sirf aapka😭💗
+                </p>
+
+            </div>
+
+        </section>
+
+        `;
+
     }
 
 });
-/* =========================================================
-   1:15 PM — BIRTHDAY UNLOCK TIMER
-   ========================================================= */
-
-(function birthdayUnlock() {
-
-    const button = document.getElementById("startButton");
-    const timer = document.getElementById("countdown");
-
-    if (!button || !timer) return;
-
-    // September 8, 2026 — 1:15 PM IST
-    const unlockTime = new Date("2026-09-08T13:15:00+05:30").getTime();
-
-    function updateCountdown() {
-
-        const now = Date.now();
-        const difference = unlockTime - now;
-
-        if (difference <= 0) {
-
-            button.disabled = false;
-            button.textContent = "Begin our story →";
-            timer.textContent = "It's time. 🎀✨";
-
-            clearInterval(countdownInterval);
-
-            return;
-        }
-
-        const totalSeconds = Math.floor(difference / 1000);
-
-        const days = Math.floor(totalSeconds / 86400);
-        const hours = Math.floor((totalSeconds % 86400) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        timer.textContent =
-            `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-    }
-
-    updateCountdown();
-
-    const countdownInterval = setInterval(updateCountdown, 1000);
-
-})();
